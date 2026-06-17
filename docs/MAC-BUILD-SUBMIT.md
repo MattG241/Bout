@@ -10,11 +10,12 @@ installable apps and then to the App Store / Google Play. Run blocks in **Termin
 ---
 
 ## STAGE 5 — Set up EAS (Expo's build service) ⏱ ~10 min
+We run EAS via `npx` (no global install needed; works regardless of your PATH). The first
+`npx eas-cli` will ask "Ok to proceed? (y)" to download the CLI — type **y**.
 ```bash
 cd ~/Desktop/Bout
-npm install -g eas-cli
-eas login
-eas init
+npx eas-cli login
+npx eas-cli init
 ```
 - `eas login` → use your Expo account (free, make one at expo.dev if needed).
 - `eas init` → creates/links an EAS project and writes its id into `app.json`. Say **yes** to
@@ -29,7 +30,7 @@ eas init
 This gives you an installable APK to try the native app (sharing, haptics, sound — everything
 except push/purchases, which need the later stages).
 ```bash
-eas build --profile preview --platform android
+npx eas-cli build --profile preview --platform android
 ```
 - First time, it asks to generate an Android keystore → say **yes** (EAS manages it).
 - The build runs on Expo's servers (~10–15 min). When done it prints a **link + QR code**.
@@ -42,19 +43,19 @@ eas build --profile preview --platform android
 
 ## STAGE 7 — iOS build → TestFlight ⏱ ~30 min  (needs Apple Developer account)
 ```bash
-eas build --profile production --platform ios
+npx eas-cli build --profile production --platform ios
 ```
 - Sign in with your **Apple Developer** account when prompted; let EAS create the certificates
   and provisioning profile (say yes to the prompts). It registers the `com.bout.app` bundle id.
 - When the build finishes, send it to TestFlight:
 ```bash
-eas submit --platform ios --latest
+npx eas-cli submit --platform ios --latest
 ```
 - **(browser)** In App Store Connect → your app → **TestFlight**, add yourself as a tester and
   install via the **TestFlight** app on your iPhone.
 
 > Free alternative to test on the iOS **Simulator** (no paid account, but push won't work there):
-> `npx expo install expo-dev-client` then `eas build --profile development --platform ios`,
+> `npx expo install expo-dev-client` then `npx eas-cli build --profile development --platform ios`,
 > and drag the result onto the Simulator.
 
 ---
@@ -64,7 +65,7 @@ Push needs per-platform credentials. Do this once you have the dev/TestFlight bu
 
 **iOS (APNs):** EAS can manage it for you:
 ```bash
-eas credentials
+npx eas-cli credentials
 ```
 Pick **iOS → Push Notifications** and let EAS create the APNs key. (Needs the Apple account.)
 
@@ -105,10 +106,10 @@ Skip for a free launch. When ready:
    results, push token, timezone. No ads, no tracking. (See `legal/privacy-policy.md`.)
 5. **Build + submit production:**
    ```bash
-   eas build --profile production --platform android
-   eas submit --platform android --latest
-   eas build --profile production --platform ios
-   eas submit --platform ios --latest
+   npx eas-cli build --profile production --platform android
+   npx eas-cli submit --platform android --latest
+   npx eas-cli build --profile production --platform ios
+   npx eas-cli submit --platform ios --latest
    ```
 6. Submit for review in each console. (Account deletion is already in Settings — that's the
    thing reviewers check most.)
@@ -123,10 +124,10 @@ Open PR #1 on GitHub → **Ready for review** → **Merge**.
 ## Cheat sheet
 | Goal | Command |
 |---|---|
-| Free Android test app | `eas build --profile preview --platform android` |
-| iOS to TestFlight | `eas build --profile production --platform ios` then `eas submit --platform ios --latest` |
-| Manage push certs | `eas credentials` |
-| Production + submit | `eas build --profile production --platform <p>` then `eas submit --platform <p> --latest` |
+| Free Android test app | `npx eas-cli build --profile preview --platform android` |
+| iOS to TestFlight | `npx eas-cli build --profile production --platform ios` then `npx eas-cli submit --platform ios --latest` |
+| Manage push certs | `npx eas-cli credentials` |
+| Production + submit | `npx eas-cli build --profile production --platform <p>` then `npx eas-cli submit --platform <p> --latest` |
 
 ## If a build fails
 Paste me the build URL or the error — most failures are a credential prompt answered "no" or a
