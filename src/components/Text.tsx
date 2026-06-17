@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text as RNText, TextProps as RNTextProps, StyleSheet } from 'react-native';
+import { Text as RNText, TextProps as RNTextProps, StyleSheet, TextStyle } from 'react-native';
 import { colors, type as typeScale } from '@/design/tokens';
 
 type Variant = keyof typeof typeScale;
@@ -23,7 +23,7 @@ export function Text({ variant = 'body', color, mono, center, style, ...rest }: 
       {...rest}
       style={[
         { color: color ?? colors.text },
-        base,
+        base as TextStyle,
         mono ? styles.mono : null,
         center ? styles.center : null,
         style,

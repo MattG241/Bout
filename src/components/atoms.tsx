@@ -15,10 +15,10 @@ export function Spacer({ size = spacing.lg }: { size?: number }) {
 }
 
 /** Uppercase tracked-out eyebrow label. */
-export function Eyebrow({ children, color }: { children: string; color?: string }) {
+export function Eyebrow({ children, color }: { children: React.ReactNode; color?: string }) {
   return (
-    <Text variant="label" color={color ?? colors.textTertiary}>
-      {children.toUpperCase()}
+    <Text variant="label" color={color ?? colors.textTertiary} style={{ textTransform: 'uppercase' }}>
+      {children}
     </Text>
   );
 }

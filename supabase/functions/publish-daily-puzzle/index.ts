@@ -34,6 +34,15 @@ Deno.serve(async (req) => {
       assertPublishable(puzzle);
       const client = toClientPayload(puzzle);
 
+      // Memory is the one type whose challenge REQUIRES briefly showing the target so the
+      // player can memorise it. We attach the sequence as a display-only `flash` field on the
+      // client payload (a documented, isolated exception to the no-leak rule). Every other
+      // type's solution stays exclusively in puzzle_solutions.
+      const payload: any = client.payload;
+      if (puzzle.type === 'memory') {
+        payload.flash = (puzzle.solution as any).sequence;
+      }
+
       const { data: up, error: upErr } = await db
         .from('puzzles')
         .upsert(
@@ -41,7 +50,7 @@ Deno.serve(async (req) => {
             play_date: date,
             type: puzzle.type,
             difficulty: puzzle.difficulty,
-            payload: client.payload,
+            payload,
             speed_window: puzzle.speedWindow ?? null,
             // Only publish today and past; future days stay unpublished until their day.
             published: date <= start,

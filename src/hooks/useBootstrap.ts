@@ -1,0 +1,56 @@
+import { useEffect, useState } from 'react';
+import { supabase } from '@/lib/supabase';
+import { getProfile, getMyLeagues } from '@/lib/api';
+import { useStore } from '@/store/useStore';
+
+export type BootstrapState = 'loading' | 'signed-out' | 'needs-handle' | 'needs-league' | 'ready';
+
+/**
+ * App bootstrap: subscribes to auth, hydrates profile + leagues, and derives where the
+ * user should land (auth → handle → league → app). Keeps the navigation gates in one place.
+ */
+export function useBootstrap(): { state: BootstrapState; refresh: () => Promise<void> } {
+  const [state, setState] = useState<BootstrapState>('loading');
+  const { setUserId, setProfile, setLeagues } = useStore();
+
+  const hydrate = async (userId: string | null) => {
+    setUserId(userId);
+    if (!userId) {
+      setProfile(null);
+      setLeagues([]);
+      setState('signed-out');
+      return;
+    }
+    const profile = await getProfile(userId);
+    setProfile(profile);
+    if (!profile) {
+      setState('needs-handle');
+      return;
+    }
+    const leagues = await getMyLeagues();
+    setLeagues(leagues);
+    setState(leagues.length === 0 ? 'needs-league' : 'ready');
+  };
+
+  const refresh = async () => {
+    const { data } = await supabase.auth.getUser();
+    await hydrate(data.user?.id ?? null);
+  };
+
+  useEffect(() => {
+    let active = true;
+    supabase.auth.getSession().then(({ data }) => {
+      if (active) hydrate(data.session?.user?.id ?? null);
+    });
+    const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
+      hydrate(session?.user?.id ?? null);
+    });
+    return () => {
+      active = false;
+      sub.subscription.unsubscribe();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  return { state, refresh };
+}
