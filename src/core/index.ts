@@ -13,3 +13,5 @@ export * from './puzzles/types';
 export * from './puzzles/rng';
 export * from './puzzles/rotation';
 export * from './puzzles/registry';
+export * from './puzzles/fingerprint';
+export * from './puzzles/stream';

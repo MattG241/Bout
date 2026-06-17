@@ -58,6 +58,7 @@ export interface PuzzleRow {
   difficulty: Difficulty;
   payload: unknown;
   speed_window: { fastMs: number; slowMs: number } | null;
+  fingerprint: string | null;
   published: boolean;
   created_at: string;
 }

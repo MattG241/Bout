@@ -2,7 +2,7 @@
 // Publishes today + a buffer of upcoming days. The mandatory pre-publish validator
 // (assertPublishable) runs on every puzzle — a broken/ambiguous puzzle is never written.
 // deno-lint-ignore-file no-explicit-any
-import { generateDailyPuzzle, assertPublishable, toClientPayload } from '../_shared/core.mjs';
+import { generateUniqueDaily, assertPublishable, toClientPayload } from '../_shared/core.mjs';
 import { serviceClient, json, errorResponse, utcToday } from '../_shared/util.ts';
 
 const BUFFER_DAYS = 3; // keep a few days pre-generated so the morning drop never misses
@@ -20,6 +20,11 @@ Deno.serve(async (req) => {
     const start = utcToday();
     const results: Array<{ date: string; type: string; status: string }> = [];
 
+    // Load every fingerprint ever shipped so we can guarantee the new puzzle is unlimited-unique
+    // (no two daily puzzles, across all of history, are ever exactly the same).
+    const { data: priorRows } = await db.from('puzzles').select('fingerprint').not('fingerprint', 'is', null);
+    const seen = new Set<string>((priorRows ?? []).map((r: any) => r.fingerprint));
+
     for (let i = 0; i <= BUFFER_DAYS; i++) {
       const date = addDays(start, i);
 
@@ -29,9 +34,11 @@ Deno.serve(async (req) => {
         continue;
       }
 
-      // Generate deterministically and gate on the validator. Throws if not provably valid.
-      const puzzle = generateDailyPuzzle(date);
+      // Generate a unique, validated puzzle for the day: keeps the scheduled type/difficulty but
+      // bumps the salt until the fingerprint has never been shipped before. Throws if invalid.
+      const { puzzle, fingerprint } = generateUniqueDaily(date, seen);
       assertPublishable(puzzle);
+      seen.add(fingerprint); // reserve it for the rest of this run too
       const client = toClientPayload(puzzle);
 
       // Memory is the one type whose challenge REQUIRES briefly showing the target so the
@@ -52,6 +59,7 @@ Deno.serve(async (req) => {
             difficulty: puzzle.difficulty,
             payload,
             speed_window: puzzle.speedWindow ?? null,
+            fingerprint,
             // Only publish today and past; future days stay unpublished until their day.
             published: date <= start,
           },

@@ -28,6 +28,11 @@ const CASTS = [
   { items: ['Ash', 'Bo', 'Cy', 'Di', 'Ed'], prompt: 'Order them tallest to shortest' },
   { items: ['Rex', 'Sky', 'Tay', 'Uma', 'Val'], prompt: 'Order them by finish, first to last' },
   { items: ['Mo', 'Nia', 'Ola', 'Pia', 'Quy'], prompt: 'Order them oldest to youngest' },
+  { items: ['Fox', 'Gus', 'Hal', 'Ivy', 'Jin'], prompt: 'Order them by score, highest first' },
+  { items: ['Kit', 'Lou', 'Mae', 'Ned', 'Oz'], prompt: 'Order them heaviest to lightest' },
+  { items: ['Pax', 'Quin', 'Rae', 'Sol', 'Tex'], prompt: 'Order them fastest to slowest' },
+  { items: ['Ada', 'Ben', 'Cleo', 'Dot', 'Eli'], prompt: 'Order them by rank, top first' },
+  { items: ['Wren', 'Xan', 'Yu', 'Zed', 'Ada'], prompt: 'Order them by finish, first to last' },
 ];
 
 function permutations<T>(arr: T[]): T[][] {

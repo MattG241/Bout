@@ -393,7 +393,29 @@ var WORDS = {
     { word: "cloud", hint: "It drifts across the sky" },
     { word: "bread", hint: "You slice it for toast" },
     { word: "chair", hint: "You sit on it" },
-    { word: "green", hint: "Colour of grass" }
+    { word: "green", hint: "Colour of grass" },
+    { word: "beach", hint: "Sand meets the sea" },
+    { word: "clock", hint: "It tells the time" },
+    { word: "mouse", hint: "A small rodent" },
+    { word: "piano", hint: "It has black and white keys" },
+    { word: "apple", hint: "Keeps the doctor away" },
+    { word: "storm", hint: "Wild weather" },
+    { word: "brush", hint: "You paint with it" },
+    { word: "candle", hint: "A wax light" },
+    { word: "grape", hint: "Wine is made from it" },
+    { word: "house", hint: "You live in it" },
+    { word: "sugar", hint: "It makes things sweet" },
+    { word: "tiger", hint: "A big striped cat" },
+    { word: "water", hint: "You drink it" },
+    { word: "glass", hint: "A window is made of it" },
+    { word: "snake", hint: "A legless reptile" },
+    { word: "train", hint: "It runs on rails" },
+    { word: "ocean", hint: "A vast body of water" },
+    { word: "lemon", hint: "A sour yellow fruit" },
+    { word: "horse", hint: "You can ride it" },
+    { word: "bench", hint: "A seat in the park" },
+    { word: "flame", hint: "Part of a fire" },
+    { word: "crown", hint: "A king wears it" }
   ],
   medium: [
     { word: "planet", hint: "Earth is one" },
@@ -403,7 +425,29 @@ var WORDS = {
     { word: "window", hint: "You look through it" },
     { word: "forest", hint: "Many trees together" },
     { word: "rocket", hint: "It launches into space" },
-    { word: "pencil", hint: "You write with it" }
+    { word: "pencil", hint: "You write with it" },
+    { word: "candle", hint: "A wax light source" },
+    { word: "orange", hint: "A citrus fruit and a colour" },
+    { word: "castle", hint: "A fortified home for royalty" },
+    { word: "guitar", hint: "A six-string instrument" },
+    { word: "island", hint: "Land surrounded by water" },
+    { word: "market", hint: "Where goods are sold" },
+    { word: "tunnel", hint: "A passage through a hill" },
+    { word: "jacket", hint: "You wear it when cold" },
+    { word: "shadow", hint: "Cast when light is blocked" },
+    { word: "frozen", hint: "Turned to ice" },
+    { word: "butter", hint: "You spread it on toast" },
+    { word: "desert", hint: "A vast dry land" },
+    { word: "engine", hint: "It powers a car" },
+    { word: "hammer", hint: "It drives nails" },
+    { word: "ladder", hint: "You climb its rungs" },
+    { word: "magnet", hint: "It attracts iron" },
+    { word: "pillow", hint: "You rest your head on it" },
+    { word: "ribbon", hint: "It ties a bow" },
+    { word: "saddle", hint: "A seat on a horse" },
+    { word: "temple", hint: "A place of worship" },
+    { word: "violin", hint: "A bowed string instrument" },
+    { word: "winter", hint: "The coldest season" }
   ],
   hard: [
     { word: "compass", hint: "It points north" },
@@ -411,7 +455,25 @@ var WORDS = {
     { word: "gravity", hint: "It pulls things down" },
     { word: "journey", hint: "A long trip" },
     { word: "lantern", hint: "A portable light" },
-    { word: "thunder", hint: "It follows lightning" }
+    { word: "thunder", hint: "It follows lightning" },
+    { word: "kitchen", hint: "Where meals are cooked" },
+    { word: "harvest", hint: "Gathering the crops" },
+    { word: "mineral", hint: "A natural solid like quartz" },
+    { word: "orchard", hint: "Where fruit trees grow" },
+    { word: "painter", hint: "An artist with a brush" },
+    { word: "quarter", hint: "One of four equal parts" },
+    { word: "soldier", hint: "Serves in an army" },
+    { word: "teacher", hint: "Leads a classroom" },
+    { word: "volcano", hint: "It can erupt with lava" },
+    { word: "whisper", hint: "To speak very softly" },
+    { word: "biscuit", hint: "A crunchy baked treat" },
+    { word: "captain", hint: "Leads a ship or team" },
+    { word: "crystal", hint: "A clear, faceted solid" },
+    { word: "freedom", hint: "The state of being free" },
+    { word: "gateway", hint: "An entrance or portal" },
+    { word: "machine", hint: "A mechanical device" },
+    { word: "pyramid", hint: "A four-sided monument" },
+    { word: "rainbow", hint: "Arc of colour after rain" }
   ]
 };
 function scramble(rng, word) {
@@ -469,7 +531,12 @@ var wordType = {
 var CASTS = [
   { items: ["Ash", "Bo", "Cy", "Di", "Ed"], prompt: "Order them tallest to shortest" },
   { items: ["Rex", "Sky", "Tay", "Uma", "Val"], prompt: "Order them by finish, first to last" },
-  { items: ["Mo", "Nia", "Ola", "Pia", "Quy"], prompt: "Order them oldest to youngest" }
+  { items: ["Mo", "Nia", "Ola", "Pia", "Quy"], prompt: "Order them oldest to youngest" },
+  { items: ["Fox", "Gus", "Hal", "Ivy", "Jin"], prompt: "Order them by score, highest first" },
+  { items: ["Kit", "Lou", "Mae", "Ned", "Oz"], prompt: "Order them heaviest to lightest" },
+  { items: ["Pax", "Quin", "Rae", "Sol", "Tex"], prompt: "Order them fastest to slowest" },
+  { items: ["Ada", "Ben", "Cleo", "Dot", "Eli"], prompt: "Order them by rank, top first" },
+  { items: ["Wren", "Xan", "Yu", "Zed", "Ada"], prompt: "Order them by finish, first to last" }
 ];
 function permutations(arr) {
   if (arr.length <= 1) return [arr];
@@ -1055,6 +1122,84 @@ function validateSubmission(puzzle, submission) {
   const def = getPuzzleType(puzzle.type);
   return def.validate(submission, puzzle.solution, puzzle.payload);
 }
+
+// src/core/puzzles/fingerprint.ts
+function canonicalize(value) {
+  if (value === null || typeof value !== "object") return JSON.stringify(value);
+  if (Array.isArray(value)) return `[${value.map(canonicalize).join(",")}]`;
+  const obj = value;
+  const keys = Object.keys(obj).sort();
+  return `{${keys.map((k) => `${JSON.stringify(k)}:${canonicalize(obj[k])}`).join(",")}}`;
+}
+function fingerprint(puzzle) {
+  const input = canonicalize({
+    type: puzzle.type,
+    difficulty: puzzle.difficulty,
+    payload: puzzle.payload,
+    solution: puzzle.solution
+  });
+  let hash = 0xcbf29ce484222325n;
+  const prime = 0x100000001b3n;
+  const mask = 0xffffffffffffffffn;
+  for (let i = 0; i < input.length; i++) {
+    hash ^= BigInt(input.charCodeAt(i));
+    hash = hash * prime & mask;
+  }
+  return hash.toString(16).padStart(16, "0");
+}
+
+// src/core/puzzles/stream.ts
+var ALL_TYPES = Object.keys(PUZZLE_TYPES);
+var DIFFICULTIES = ["easy", "medium", "hard"];
+function createUniqueStream(opts = {}) {
+  const seen = new Set(opts.seen ?? []);
+  const salt = opts.salt ?? "bout-stream";
+  const maxAttempts = opts.maxAttemptsPerPuzzle ?? 5e3;
+  let counter = 0;
+  let last = null;
+  const next = () => {
+    for (let attempt = 0; attempt < maxAttempts; attempt++) {
+      const typeId = opts.type ?? ALL_TYPES[counter % ALL_TYPES.length];
+      const def = getPuzzleType(typeId);
+      const difficulty = opts.difficulty ?? DIFFICULTIES[(counter >> 3) % DIFFICULTIES.length];
+      const seed = `${salt}:${typeId}:${difficulty}:${counter}:${attempt}`;
+      counter++;
+      const puzzle = def.generate(makeRng(seed), difficulty);
+      if (!def.selfCheck(puzzle).ok) continue;
+      const fp = fingerprint(puzzle);
+      if (seen.has(fp)) continue;
+      seen.add(fp);
+      last = fp;
+      return puzzle;
+    }
+    throw new Error(
+      `puzzle space exhausted for type=${opts.type ?? "all"} after ${maxAttempts} attempts`
+    );
+  };
+  return {
+    next,
+    take: (n) => Array.from({ length: n }, () => next()),
+    lastFingerprint: () => last,
+    size: () => seen.size
+  };
+}
+function generateUnique(count, opts = {}) {
+  return createUniqueStream(opts).take(count);
+}
+function generateUniqueDaily(playDate, seenFingerprints = [], leagueSalt = "bout-global") {
+  const { type, difficulty } = scheduleForDate(playDate);
+  const def = getPuzzleType(type);
+  const seen = new Set(seenFingerprints);
+  for (let attempt = 0; attempt < 1e4; attempt++) {
+    const seed = `${leagueSalt}:${playDate}:${attempt}`;
+    const puzzle = def.generate(makeRng(seed), difficulty);
+    if (!def.selfCheck(puzzle).ok) continue;
+    const fp = fingerprint(puzzle);
+    if (seen.has(fp)) continue;
+    return { puzzle, fingerprint: fp };
+  }
+  throw new Error(`could not generate a non-repeating ${type} puzzle for ${playDate}`);
+}
 export {
   Config,
   PICKEM,
@@ -1070,11 +1215,16 @@ export {
   actualDayWinner,
   assertPublishable,
   buildSeasonWindow,
+  canonicalize,
   computeDivisionChanges,
+  createUniqueStream,
   dailySeed,
   difficultyForDayOfWeek,
+  fingerprint,
   generateDailyPuzzle,
   generateInviteCode,
+  generateUnique,
+  generateUniqueDaily,
   getPuzzleType,
   improvementPoints,
   inviteLink,
