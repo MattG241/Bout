@@ -5,6 +5,7 @@ import { Eyebrow, Spacer } from '@/components/atoms';
 import { Button } from '@/components/Button';
 import type { RendererProps } from './types';
 import type { MemoryPayload } from '@core/puzzles/memory';
+import { playCue } from '@/lib/sound';
 import { colors, radius, spacing } from '@/design/tokens';
 
 /**
@@ -77,7 +78,12 @@ export function MemoryPlay({ payload, onSubmissionChange }: RendererProps<Memory
         {payload.alphabet.map((s) => (
           <Pressable
             key={s}
-            onPress={() => recall.length < payload.length && setRecall([...recall, s])}
+            onPress={() => {
+              if (recall.length < payload.length) {
+                playCue('tap');
+                setRecall([...recall, s]);
+              }
+            }}
             style={styles.key}
           >
             <Text variant="heading" mono>

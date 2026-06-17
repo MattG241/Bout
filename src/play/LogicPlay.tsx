@@ -4,6 +4,7 @@ import { Text } from '@/components/Text';
 import { Eyebrow, Spacer } from '@/components/atoms';
 import type { RendererProps } from './types';
 import type { LogicPayload } from '@core/puzzles/logic';
+import { playCue } from '@/lib/sound';
 import { colors, radius, spacing } from '@/design/tokens';
 
 /** Tap items in order to build the ranking. Tapping a placed item removes it. */
@@ -15,6 +16,7 @@ export function LogicPlay({ payload, onSubmissionChange }: RendererProps<LogicPa
   }, [order, payload.items.length, onSubmissionChange]);
 
   const toggle = (item: string) => {
+    playCue('tap');
     setOrder((o) => (o.includes(item) ? o.filter((x) => x !== item) : [...o, item]));
   };
 

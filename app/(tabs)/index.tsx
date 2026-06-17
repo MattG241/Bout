@@ -6,10 +6,12 @@ import { Text } from '@/components/Text';
 import { Button } from '@/components/Button';
 import { Card } from '@/components/Card';
 import { Spacer, Eyebrow, Divider, LiveDot, Loading, StateMessage } from '@/components/atoms';
+import { Appear } from '@/components/motion';
 import { useToday } from '@/hooks/useToday';
 import { useActiveLeague, useStore } from '@/store/useStore';
 import { TYPE_LABELS } from '@/play/PuzzleRenderer';
 import { submitPrediction } from '@/lib/api';
+import { playCue } from '@/lib/sound';
 import { colors, spacing, radius } from '@/design/tokens';
 
 const WEEKDAY = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
@@ -58,6 +60,7 @@ export default function Today() {
           <StateMessage title="No bout yet" subtitle="Today's puzzle hasn't dropped. Check back shortly." />
         </Card>
       ) : (
+        <Appear>
         <Card raised>
           <View style={styles.boutHeader}>
             <Eyebrow color={colors.textSecondary}>{TYPE_LABELS[data.puzzle.type].toUpperCase()} · {data.puzzle.difficulty.toUpperCase()}</Eyebrow>
@@ -93,6 +96,7 @@ export default function Today() {
             </>
           )}
         </Card>
+        </Appear>
       )}
 
       <Spacer size={spacing.xl} />
@@ -170,6 +174,7 @@ function Pickem({
             <Pressable
               key={m.user_id}
               onPress={() => {
+                playCue('tap');
                 setPicked(m.user_id);
                 onPick(m.user_id);
               }}

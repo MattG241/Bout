@@ -6,6 +6,8 @@ import { Card } from '@/components/Card';
 import { Button } from '@/components/Button';
 import { Divider, Spacer, Eyebrow } from '@/components/atoms';
 import { useStore } from '@/store/useStore';
+import { usePrefs } from '@/lib/prefs';
+import { playCue } from '@/lib/sound';
 import { useBootstrapState } from '@/providers/Bootstrap';
 import { signOut, deleteAccount } from '@/lib/api';
 import { registerForPushNotifications } from '@/lib/notifications';
@@ -23,6 +25,7 @@ import { colors, spacing } from '@/design/tokens';
 export default function Settings() {
   const router = useRouter();
   const { profile, reset } = useStore();
+  const { soundEnabled, setSoundEnabled, hapticsEnabled, setHapticsEnabled } = usePrefs();
   const { refresh } = useBootstrapState();
   const [pushOn, setPushOn] = useState(!!profile?.push_token);
   const [entitlements, setEntitlements] = useState<string[]>([]);
@@ -129,6 +132,46 @@ export default function Settings() {
           <Switch
             value={pushOn}
             onValueChange={togglePush}
+            trackColor={{ true: colors.accent, false: colors.borderStrong }}
+            thumbColor={colors.text}
+          />
+        </View>
+      </Card>
+
+      <Spacer size={spacing.lg} />
+
+      {/* Feedback: sound + haptics */}
+      <Card>
+        <Eyebrow>FEEDBACK</Eyebrow>
+        <Spacer size={spacing.sm} />
+        <View style={styles.switchRow}>
+          <View style={{ flex: 1 }}>
+            <Text variant="body">Sound effects</Text>
+            <Text variant="caption" color={colors.textTertiary}>
+              Subtle cues for taps, submits, and the result bell. Respects your silent switch.
+            </Text>
+          </View>
+          <Switch
+            value={soundEnabled}
+            onValueChange={(v) => {
+              setSoundEnabled(v);
+              if (v) playCue('bell'); // a little preview when turning it on
+            }}
+            trackColor={{ true: colors.accent, false: colors.borderStrong }}
+            thumbColor={colors.text}
+          />
+        </View>
+        <Divider />
+        <View style={styles.switchRow}>
+          <View style={{ flex: 1 }}>
+            <Text variant="body">Haptics</Text>
+            <Text variant="caption" color={colors.textTertiary}>
+              Light vibration feedback on key actions.
+            </Text>
+          </View>
+          <Switch
+            value={hapticsEnabled}
+            onValueChange={setHapticsEnabled}
             trackColor={{ true: colors.accent, false: colors.borderStrong }}
             thumbColor={colors.text}
           />

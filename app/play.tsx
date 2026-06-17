@@ -96,7 +96,7 @@ export default function Play() {
   return (
     <Screen
       scroll
-      footer={<Button label={ready ? 'Submit' : 'Finish the puzzle'} disabled={!ready} loading={submitting} onPress={onSubmit} />}
+      footer={<Button label={ready ? 'Submit' : 'Finish the puzzle'} cue="submit" disabled={!ready} loading={submitting} onPress={onSubmit} />}
     >
       <View style={styles.topBar}>
         <Pressable onPress={confirmQuit} hitSlop={12}>

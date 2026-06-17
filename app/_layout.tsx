@@ -7,6 +7,7 @@ import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { BootstrapProvider } from '@/providers/Bootstrap';
 import { registerForPushNotifications, setupNotificationChannels } from '@/lib/notifications';
+import { initSound } from '@/lib/sound';
 import { colors } from '@/design/tokens';
 
 SplashScreen.preventAutoHideAsync().catch(() => {});
@@ -14,6 +15,7 @@ SplashScreen.preventAutoHideAsync().catch(() => {});
 export default function RootLayout() {
   useEffect(() => {
     setupNotificationChannels();
+    initSound(); // preload the subtle sound cues (no-op if audio is unavailable)
     // Hide splash shortly after mount; the bootstrap hub shows its own loading state.
     const t = setTimeout(() => SplashScreen.hideAsync().catch(() => {}), 350);
     return () => clearTimeout(t);

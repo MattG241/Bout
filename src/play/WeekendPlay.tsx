@@ -4,6 +4,7 @@ import { Text } from '@/components/Text';
 import { Eyebrow, Spacer } from '@/components/atoms';
 import type { RendererProps } from './types';
 import type { WeekendPayload } from '@core/puzzles/weekend';
+import { playCue } from '@/lib/sound';
 import { colors, radius, spacing } from '@/design/tokens';
 
 /** 4×4 mini-Sudoku: tap a blank cell, then a number 1–4. */
@@ -20,6 +21,7 @@ export function WeekendPlay({ payload, onSubmissionChange }: RendererProps<Weeke
     if (!selected) return;
     const { r, c } = selected;
     if (payload.grid[r]![c] !== 0) return; // can't change a given clue
+    playCue('tap');
     setGrid((g) => {
       const next = g.map((row) => [...row]);
       next[r]![c] = next[r]![c] === n ? 0 : n;

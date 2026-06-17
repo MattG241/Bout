@@ -3,6 +3,8 @@ import { View, StyleSheet, Pressable } from 'react-native';
 import { Screen } from '@/components/Screen';
 import { Text } from '@/components/Text';
 import { Divider, Spacer, Eyebrow, LiveDot, Loading, StateMessage } from '@/components/atoms';
+import { AnimatedView, Reorder } from '@/components/motion';
+import { playCue } from '@/lib/sound';
 import { useStandings } from '@/hooks/useStandings';
 import { useActiveLeague, useStore } from '@/store/useStore';
 import { rankStandings, type StandingRow as CoreStanding } from '@core/season';
@@ -74,7 +76,14 @@ export default function Ladder() {
         <>
           <View style={styles.classRow}>
             {classesPresent.map((wc) => (
-              <Pressable key={wc} onPress={() => setActiveClass(wc)} style={[styles.classChip, shownClass === wc && styles.classChipOn]}>
+              <Pressable
+                key={wc}
+                onPress={() => {
+                  playCue('tap');
+                  setActiveClass(wc);
+                }}
+                style={[styles.classChip, shownClass === wc && styles.classChipOn]}
+              >
                 <Text variant="label" color={shownClass === wc ? colors.text : colors.textTertiary}>
                   {wc.toUpperCase()}
                 </Text>
@@ -112,7 +121,7 @@ export default function Ladder() {
         shown.map((r) => {
           const me = r.user_id === profile?.id;
           return (
-            <View key={r.id} style={[styles.row, me && styles.rowMe]}>
+            <AnimatedView key={r.id} layout={Reorder} style={[styles.row, me && styles.rowMe]}>
               <Text variant="data" mono color={r.rank <= 3 ? colors.text : colors.textSecondary} style={{ width: 36 }}>
                 {r.rank}
               </Text>
@@ -126,7 +135,7 @@ export default function Ladder() {
               <Text variant="data" mono style={{ width: 72, textAlign: 'right' }}>
                 {r.total_points}
               </Text>
-            </View>
+            </AnimatedView>
           );
         })
       )}

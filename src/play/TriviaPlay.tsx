@@ -4,6 +4,7 @@ import { Text } from '@/components/Text';
 import { Eyebrow, Spacer } from '@/components/atoms';
 import type { RendererProps } from './types';
 import type { TriviaPayload } from '@core/puzzles/trivia';
+import { playCue } from '@/lib/sound';
 import { colors, radius, spacing } from '@/design/tokens';
 
 export function TriviaPlay({ payload, onSubmissionChange }: RendererProps<TriviaPayload>) {
@@ -33,7 +34,7 @@ export function TriviaPlay({ payload, onSubmissionChange }: RendererProps<Trivia
       <Spacer size={spacing.xxl} />
       <View style={styles.options}>
         {payload.options.map((opt) => (
-          <Pressable key={opt} onPress={() => setChoice(opt)} style={[styles.option, choice === opt && styles.optionActive]}>
+          <Pressable key={opt} onPress={() => { playCue('tap'); setChoice(opt); }} style={[styles.option, choice === opt && styles.optionActive]}>
             <Text variant="bodyStrong" mono color={choice === opt ? colors.text : colors.textSecondary}>
               {opt}
             </Text>

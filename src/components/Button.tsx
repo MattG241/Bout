@@ -1,8 +1,11 @@
 import React from 'react';
 import { Pressable, StyleSheet, ActivityIndicator, View, ViewStyle } from 'react-native';
+import Animated, { useSharedValue, useAnimatedStyle, withTiming, Easing } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
 import { Text } from './Text';
-import { colors, radius, spacing } from '@/design/tokens';
+import { colors, radius, spacing, motion } from '@/design/tokens';
+import { usePrefs } from '@/lib/prefs';
+import { playCue, type Cue } from '@/lib/sound';
 
 type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger';
 
@@ -13,9 +16,12 @@ interface ButtonProps {
   disabled?: boolean;
   loading?: boolean;
   style?: ViewStyle;
-  /** The single accent is reserved for the primary action — use primary sparingly. */
   full?: boolean;
+  /** Sound cue on press (default 'tap'); pass 'none' to stay silent. */
+  cue?: Cue | 'none';
 }
+
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 export function Button({
   label,
@@ -25,25 +31,37 @@ export function Button({
   loading,
   style,
   full = true,
+  cue = 'tap',
 }: ButtonProps) {
   const isDisabled = disabled || loading;
+  const scale = useSharedValue(1);
+  const animStyle = useAnimatedStyle(() => ({ transform: [{ scale: scale.value }] }));
+
+  const press = (to: number) => {
+    scale.value = withTiming(to, { duration: motion.fast, easing: Easing.out(Easing.quad) });
+  };
 
   const handlePress = () => {
     if (isDisabled) return;
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+    if (usePrefs.getState().hapticsEnabled) {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+    }
+    if (cue !== 'none') playCue(cue);
     onPress();
   };
 
   return (
-    <Pressable
+    <AnimatedPressable
       onPress={handlePress}
+      onPressIn={() => !isDisabled && press(0.97)}
+      onPressOut={() => press(1)}
       disabled={isDisabled}
-      style={({ pressed }) => [
+      style={[
         styles.base,
         full && styles.full,
         variantStyles[variant].container,
-        pressed && !isDisabled ? styles.pressed : null,
         isDisabled ? styles.disabled : null,
+        animStyle,
         style,
       ]}
       accessibilityRole="button"
@@ -58,7 +76,7 @@ export function Button({
           </Text>
         )}
       </View>
-    </Pressable>
+    </AnimatedPressable>
   );
 }
 
@@ -72,7 +90,6 @@ const styles = StyleSheet.create({
   },
   full: { alignSelf: 'stretch' },
   inner: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
-  pressed: { opacity: 0.7 },
   disabled: { opacity: 0.35 },
 });
 

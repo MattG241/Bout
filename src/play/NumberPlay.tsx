@@ -4,6 +4,7 @@ import { Text } from '@/components/Text';
 import { Eyebrow, Spacer } from '@/components/atoms';
 import type { RendererProps } from './types';
 import type { NumberPayload } from '@core/puzzles/number';
+import { playCue } from '@/lib/sound';
 import { colors, radius, spacing } from '@/design/tokens';
 
 /** Numeric keypad to fill the blank in the equation. */
@@ -16,6 +17,7 @@ export function NumberPlay({ payload, onSubmissionChange }: RendererProps<Number
   }, [entry, onSubmissionChange]);
 
   const press = (k: string) => {
+    playCue('tap');
     if (k === '⌫') setEntry((e) => e.slice(0, -1));
     else if (k === '±') setEntry((e) => (e.startsWith('-') ? e.slice(1) : '-' + e));
     else if (entry.replace('-', '').length < 4) setEntry((e) => e + k);

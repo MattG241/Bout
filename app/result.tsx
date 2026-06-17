@@ -6,8 +6,10 @@ import { Text } from '@/components/Text';
 import { Button } from '@/components/Button';
 import { Card } from '@/components/Card';
 import { Divider, Spacer, Eyebrow, Loading } from '@/components/atoms';
+import { Appear, AnimatedNumber } from '@/components/motion';
 import { ShareCard, type ShareCardData } from '@/components/ShareCard';
 import { shareCardImage } from '@/lib/share';
+import { playCue } from '@/lib/sound';
 import { getMyAttempt, getTodayPuzzle } from '@/lib/api';
 import { useStore } from '@/store/useStore';
 import { useActiveLeague } from '@/store/useStore';
@@ -66,6 +68,16 @@ export default function Result() {
     })();
   }, [puzzleId, payload]);
 
+  // The reveal moment: ring the bell on a fresh result, with a streak chime if you're on a run.
+  useEffect(() => {
+    if (!data || !payload) return;
+    playCue('bell');
+    if (data.streak >= 2) {
+      const t = setTimeout(() => playCue('streak'), 480);
+      return () => clearTimeout(t);
+    }
+  }, [data, payload]);
+
   if (loading) return <Screen><Loading /></Screen>;
   if (!data)
     return (
@@ -89,14 +101,13 @@ export default function Result() {
     <Screen scroll footer={<Button label="Back to today" variant="secondary" onPress={() => router.replace('/(tabs)')} />}>
       <Eyebrow color={colors.accent}>RESULT</Eyebrow>
       <Spacer size={spacing.md} />
-      <Text variant="display" mono>
-        {data.finalScore}
-      </Text>
+      <AnimatedNumber value={data.finalScore} duration={700} variant="display" />
       <Text variant="body" color={colors.textSecondary}>
         {data.finalsApplied ? 'Finals week — score doubled.' : "Today's score on the ladder."}
       </Text>
 
       <Spacer size={spacing.xl} />
+      <Appear delay={120}>
       <Card>
         <Eyebrow>BREAKDOWN</Eyebrow>
         <Spacer size={spacing.md} />
@@ -115,15 +126,18 @@ export default function Result() {
         <Spacer size={spacing.sm} />
         <Row label="Final score" value={`${data.finalScore}`} big />
       </Card>
+      </Appear>
 
       <Spacer size={spacing.xl} />
 
-      {/* Off-screen capture surface for the share card */}
-      <View style={styles.cardWrap}>
-        <ShareCard ref={cardRef} data={cardData} />
-      </View>
-      <Spacer size={spacing.lg} />
-      <Button label="Share result" onPress={() => shareCardImage(cardRef)} />
+      {/* Capture surface for the share card */}
+      <Appear delay={260}>
+        <View style={styles.cardWrap}>
+          <ShareCard ref={cardRef} data={cardData} />
+        </View>
+        <Spacer size={spacing.lg} />
+        <Button label="Share result" onPress={() => shareCardImage(cardRef)} />
+      </Appear>
     </Screen>
   );
 }

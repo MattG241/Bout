@@ -3,6 +3,7 @@ import { View, StyleSheet, Pressable } from 'react-native';
 import { Eyebrow, Spacer } from '@/components/atoms';
 import type { RendererProps } from './types';
 import type { VisualPayload, Grid } from '@core/puzzles/visual';
+import { playCue } from '@/lib/sound';
 import { colors, radius, spacing } from '@/design/tokens';
 
 const TRANSFORM_LABEL: Record<string, string> = {
@@ -52,7 +53,7 @@ export function VisualPlay({ payload, onSubmissionChange }: RendererProps<Visual
         {payload.options.map((opt, i) => (
           <Pressable
             key={i}
-            onPress={() => setChoice(i)}
+            onPress={() => { playCue('tap'); setChoice(i); }}
             style={[styles.option, choice === i && styles.optionActive]}
           >
             <MiniGrid grid={opt} />

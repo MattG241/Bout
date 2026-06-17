@@ -19,7 +19,9 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.bout.app",
-      "associatedDomains": ["applinks:bout.app"],
+      "associatedDomains": [
+        "applinks:bout.app"
+      ],
       "infoPlist": {
         "UIBackgroundModes": [
           "remote-notification"
@@ -40,8 +42,17 @@
         {
           "action": "VIEW",
           "autoVerify": true,
-          "data": [{ "scheme": "https", "host": "bout.app", "pathPrefix": "/join" }],
-          "category": ["BROWSABLE", "DEFAULT"]
+          "data": [
+            {
+              "scheme": "https",
+              "host": "bout.app",
+              "pathPrefix": "/join"
+            }
+          ],
+          "category": [
+            "BROWSABLE",
+            "DEFAULT"
+          ]
         }
       ]
     },
@@ -57,7 +68,8 @@
         }
       ],
       "expo-asset",
-      "expo-font"
+      "expo-font",
+      "expo-audio"
     ],
     "experiments": {
       "typedRoutes": true

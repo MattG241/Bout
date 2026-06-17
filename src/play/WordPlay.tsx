@@ -4,6 +4,7 @@ import { Text } from '@/components/Text';
 import { Eyebrow, Spacer } from '@/components/atoms';
 import type { RendererProps } from './types';
 import type { WordPayload } from '@core/puzzles/word';
+import { playCue } from '@/lib/sound';
 import { colors, radius, spacing } from '@/design/tokens';
 
 export function WordPlay({ payload, onSubmissionChange }: RendererProps<WordPayload>) {
@@ -16,6 +17,7 @@ export function WordPlay({ payload, onSubmissionChange }: RendererProps<WordPayl
   }, [answer, payload.length, onSubmissionChange]);
 
   const tap = (i: number) => {
+    playCue('tap');
     if (used.includes(i)) setUsed(used.filter((u) => u !== i));
     else if (used.length < payload.length) setUsed([...used, i]);
   };
