@@ -12,11 +12,14 @@ interface AppState {
   profile: ProfileRow | null;
   leagues: LeagueRow[];
   activeLeagueId: string | null;
+  /** An invite code captured from a deep link before the user finished onboarding. */
+  pendingInviteCode: string | null;
 
   setUserId: (id: string | null) => void;
   setProfile: (p: ProfileRow | null) => void;
   setLeagues: (l: LeagueRow[]) => void;
   setActiveLeague: (id: string | null) => void;
+  setPendingInviteCode: (code: string | null) => void;
   reset: () => void;
 }
 
@@ -25,6 +28,7 @@ export const useStore = create<AppState>((set) => ({
   profile: null,
   leagues: [],
   activeLeagueId: null,
+  pendingInviteCode: null,
 
   setUserId: (userId) => set({ userId }),
   setProfile: (profile) => set({ profile }),
@@ -36,6 +40,7 @@ export const useStore = create<AppState>((set) => ({
         : (leagues[0]?.id ?? null),
     })),
   setActiveLeague: (activeLeagueId) => set({ activeLeagueId }),
+  setPendingInviteCode: (pendingInviteCode) => set({ pendingInviteCode }),
   reset: () => set({ userId: null, profile: null, leagues: [], activeLeagueId: null }),
 }));
 

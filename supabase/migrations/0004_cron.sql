@@ -25,8 +25,9 @@ begin
       );
     $cron$);
 
-    -- 2) The windowed daily drop push (08:00 UTC — adjust per primary timezone).
-    perform cron.schedule('bout-daily-push', '0 8 * * *', $cron$
+    -- 2) The windowed daily drop push — runs HOURLY; the function itself only notifies users
+    --    whose local time is in the morning window and who haven't had today's drop yet.
+    perform cron.schedule('bout-daily-push', '0 * * * *', $cron$
       select net.http_post(
         url := 'https://<PROJECT_REF>.functions.supabase.co/send-daily-push',
         headers := jsonb_build_object('Authorization', 'Bearer ' || (select decrypted_secret from vault.decrypted_secrets where name = 'service_role_key'), 'Content-Type', 'application/json'),

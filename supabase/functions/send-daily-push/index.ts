@@ -1,13 +1,14 @@
-// Scheduled: the windowed daily drop. Fires in a morning window (not a fixed-second alarm)
-// to everyone with a push token, telling them today's bout is live. Also sends finals and
-// key-moment nudges. Uses the Expo push service (works for both APNs and FCM).
+// The windowed daily drop, now timezone-aware. Runs hourly; for each user it sends only when
+// it is currently their local morning window AND they haven't already had today's drop. This
+// keeps "today's bout is live" a genuine morning nudge for a global audience — never a fixed
+// UTC alarm, never twice in a day. Uses Expo push (APNs + FCM).
 // deno-lint-ignore-file no-explicit-any
-import { serviceClient, json, errorResponse, utcToday } from '../_shared/util.ts';
+import { localDate, isWithinLocalWindow, PUSH } from '../_shared/core.mjs';
+import { serviceClient, json, errorResponse } from '../_shared/util.ts';
 
 const EXPO_PUSH_URL = 'https://exp.host/--/api/v2/push/send';
 
 async function sendExpoPush(messages: any[]): Promise<void> {
-  // Expo accepts batches of up to 100.
   for (let i = 0; i < messages.length; i += 100) {
     const batch = messages.slice(i, i + 100);
     await fetch(EXPO_PUSH_URL, {
@@ -24,35 +25,54 @@ Deno.serve(async (req) => {
     const db = serviceClient();
     const body = await req.json().catch(() => ({}));
     const kind: 'daily' | 'finals' = body.kind ?? 'daily';
-    const today = utcToday();
-
-    // Is today a finals day for any league? (Drives the finals nudge copy.)
-    const { data: puzzle } = await db.from('puzzles').select('id, type').eq('play_date', today).maybeSingle();
-    if (!puzzle && kind === 'daily') return json({ ok: true, sent: 0, reason: 'no puzzle today' });
+    const now = new Date();
 
     const { data: users } = await db
       .from('profiles')
-      .select('id, push_token, handle')
+      .select('id, push_token, timezone, stats')
       .not('push_token', 'is', null);
 
-    const title = kind === 'finals' ? 'Title bout — finals week' : "Today's bout is live";
-    const subtitle =
-      kind === 'finals'
-        ? 'Scores double this week. Make it count.'
-        : 'One puzzle. Your crew is waiting.';
+    const messages: any[] = [];
+    const toMark: Array<{ id: string; stats: any; localDay: string }> = [];
 
-    const messages = (users ?? []).map((u: any) => ({
-      to: u.push_token,
-      sound: 'default',
-      title,
-      body: subtitle,
-      data: { type: kind, playDate: today, puzzleId: puzzle?.id },
-      // A small jitter window is achieved by the scheduler firing within the morning band;
-      // we deliberately do NOT pin a second so it never feels like a "drop everything" alarm.
-      channelId: 'daily-drop',
-    }));
+    for (const u of users ?? []) {
+      const tz = u.timezone || 'UTC';
+      // Only fire in the user's local morning window.
+      if (!isWithinLocalWindow(tz, PUSH.dropWindowStartHour, PUSH.dropWindowEndHour, now)) continue;
+
+      const localDay = localDate(tz, now);
+      // De-dupe: at most one drop per local day.
+      if (u.stats?.last_drop_date === localDay) continue;
+
+      // Is there a published puzzle for this user's local day?
+      const { data: puzzle } = await db.from('puzzles').select('id, type').eq('play_date', localDay).maybeSingle();
+      if (!puzzle) continue;
+
+      const title = kind === 'finals' ? 'Title bout — finals week' : "Today's bout is live";
+      const subtitle =
+        kind === 'finals' ? 'Scores double this week. Make it count.' : 'One puzzle. Your crew is waiting.';
+
+      messages.push({
+        to: u.push_token,
+        sound: 'default',
+        title,
+        body: subtitle,
+        data: { type: kind, playDate: localDay, puzzleId: puzzle.id },
+        channelId: 'daily-drop',
+      });
+      toMark.push({ id: u.id, stats: u.stats ?? {}, localDay });
+    }
 
     await sendExpoPush(messages);
+
+    // Record that we sent today's drop so the next hourly run won't double-send.
+    for (const m of toMark) {
+      await db
+        .from('profiles')
+        .update({ stats: { ...m.stats, last_drop_date: m.localDay } })
+        .eq('id', m.id);
+    }
+
     return json({ ok: true, sent: messages.length, kind });
   } catch (e) {
     return errorResponse((e as Error).message, 500);

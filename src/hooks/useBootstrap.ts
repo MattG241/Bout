@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
-import { getProfile, getMyLeagues } from '@/lib/api';
+import { getProfile, getMyLeagues, syncTimezone } from '@/lib/api';
 import { useStore } from '@/store/useStore';
 
 export type BootstrapState = 'loading' | 'signed-out' | 'needs-handle' | 'needs-league' | 'ready';
@@ -27,6 +27,8 @@ export function useBootstrap(): { state: BootstrapState; refresh: () => Promise<
       setState('needs-handle');
       return;
     }
+    // Keep the stored timezone current so the morning push stays in local time.
+    syncTimezone().catch(() => {});
     const leagues = await getMyLeagues();
     setLeagues(leagues);
     setState(leagues.length === 0 ? 'needs-league' : 'ready');

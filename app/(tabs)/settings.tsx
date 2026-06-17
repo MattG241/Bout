@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, Switch, Alert } from 'react-native';
+import { View, StyleSheet, Switch, Alert, Linking, Pressable } from 'react-native';
 import { Screen } from '@/components/Screen';
 import { Text } from '@/components/Text';
 import { Card } from '@/components/Card';
@@ -7,7 +7,7 @@ import { Button } from '@/components/Button';
 import { Divider, Spacer, Eyebrow } from '@/components/atoms';
 import { useStore } from '@/store/useStore';
 import { useBootstrapState } from '@/providers/Bootstrap';
-import { signOut } from '@/lib/api';
+import { signOut, deleteAccount } from '@/lib/api';
 import { registerForPushNotifications } from '@/lib/notifications';
 import {
   getEntitlements,
@@ -60,6 +60,39 @@ export default function Settings() {
     reset();
     await refresh();
     router.replace('/');
+  };
+
+  const confirmDelete = () => {
+    // Two-step confirm for a destructive, irreversible action.
+    Alert.alert(
+      'Delete account?',
+      'This permanently erases your profile, attempts, streaks, and standings. This cannot be undone.',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Delete everything',
+          style: 'destructive',
+          onPress: () =>
+            Alert.alert('Are you absolutely sure?', 'There is no way to recover your account.', [
+              { text: 'Keep my account', style: 'cancel' },
+              {
+                text: 'Delete',
+                style: 'destructive',
+                onPress: async () => {
+                  try {
+                    await deleteAccount();
+                    reset();
+                    await refresh();
+                    router.replace('/');
+                  } catch (e) {
+                    Alert.alert('Could not delete', (e as Error).message);
+                  }
+                },
+              },
+            ]),
+        },
+      ],
+    );
   };
 
   const premium = hasPremium(entitlements);
@@ -138,7 +171,26 @@ export default function Settings() {
       </Card>
 
       <Spacer size={spacing.xl} />
+
+      {/* Legal */}
+      <Card>
+        <Eyebrow>ABOUT</Eyebrow>
+        <Spacer size={spacing.sm} />
+        <Pressable style={styles.row} onPress={() => Linking.openURL('https://bout.app/privacy')}>
+          <Text variant="body">Privacy policy</Text>
+          <Text variant="body" color={colors.textTertiary}>›</Text>
+        </Pressable>
+        <Divider />
+        <Pressable style={styles.row} onPress={() => Linking.openURL('https://bout.app/terms')}>
+          <Text variant="body">Terms of service</Text>
+          <Text variant="body" color={colors.textTertiary}>›</Text>
+        </Pressable>
+      </Card>
+
+      <Spacer size={spacing.xl} />
       <Button label="Sign out" variant="ghost" onPress={doSignOut} />
+      <Spacer size={spacing.md} />
+      <Button label="Delete account" variant="danger" onPress={confirmDelete} />
       <Spacer size={spacing.lg} />
       <Text variant="caption" color={colors.textTertiary} center>
         Bout v1.0.0 · {ENTITLEMENT_PREMIUM}

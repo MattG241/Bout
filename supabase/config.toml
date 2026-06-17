@@ -34,6 +34,13 @@ verify_jwt = true
 verify_jwt = true
 [functions.finalize-race]
 verify_jwt = true
+[functions.score-race]
+verify_jwt = true
+[functions.delete-account]
+verify_jwt = true
+# RevenueCat posts server-to-server with its own shared-secret Authorization header.
+[functions.revenuecat-webhook]
+verify_jwt = false
 [functions.publish-daily-puzzle]
 verify_jwt = false
 [functions.resolve-pickem]

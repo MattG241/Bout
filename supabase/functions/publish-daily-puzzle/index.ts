@@ -60,8 +60,9 @@ Deno.serve(async (req) => {
             payload,
             speed_window: puzzle.speedWindow ?? null,
             fingerprint,
-            // Only publish today and past; future days stay unpublished until their day.
-            published: date <= start,
+            // Publish today and tomorrow (so timezones ahead of UTC can fetch their local
+            // "today"); later buffer days stay staged/unpublished until their turn.
+            published: date <= addDays(start, 1),
           },
           { onConflict: 'play_date' },
         )
@@ -70,7 +71,7 @@ Deno.serve(async (req) => {
       if (upErr) throw upErr;
 
       await db.from('puzzle_solutions').upsert({ puzzle_id: up.id, solution: puzzle.solution });
-      results.push({ date, type: puzzle.type, status: date <= start ? 'published' : 'staged' });
+      results.push({ date, type: puzzle.type, status: date <= addDays(start, 1) ? 'published' : 'staged' });
     }
 
     return json({ ok: true, results });

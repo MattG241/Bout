@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Screen } from '@/components/Screen';
@@ -10,6 +10,7 @@ import { Spacer, Eyebrow, Divider } from '@/components/atoms';
 import { createCrew, joinByCode, matchHouseLeague } from '@/lib/api';
 import { isValidInviteCode } from '@core/leagues';
 import { useBootstrapState } from '@/providers/Bootstrap';
+import { useStore } from '@/store/useStore';
 import { colors, spacing } from '@/design/tokens';
 
 /**
@@ -19,11 +20,21 @@ import { colors, spacing } from '@/design/tokens';
 export default function LeagueScreen() {
   const router = useRouter();
   const { refresh } = useBootstrapState();
-  const [tab, setTab] = useState<'create' | 'join'>('create');
+  const { pendingInviteCode, setPendingInviteCode } = useStore();
+  const [tab, setTab] = useState<'create' | 'join'>(pendingInviteCode ? 'join' : 'create');
   const [name, setName] = useState('');
-  const [code, setCode] = useState('');
+  const [code, setCode] = useState(pendingInviteCode ?? '');
   const [busy, setBusy] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  // Arriving from an invite deep link: pre-fill the code, then clear the pending value.
+  useEffect(() => {
+    if (pendingInviteCode) {
+      setCode(pendingInviteCode);
+      setTab('join');
+      setPendingInviteCode(null);
+    }
+  }, [pendingInviteCode, setPendingInviteCode]);
 
   const run = async (key: string, fn: () => Promise<unknown>) => {
     setBusy(key);

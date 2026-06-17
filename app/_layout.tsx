@@ -38,6 +38,7 @@ export default function RootLayout() {
             <Stack.Screen name="play" options={{ presentation: 'modal', animation: 'slide_from_bottom' }} />
             <Stack.Screen name="result" options={{ presentation: 'modal', animation: 'slide_from_bottom' }} />
             <Stack.Screen name="race" />
+            <Stack.Screen name="join/[code]" />
           </Stack>
         </BootstrapProvider>
       </SafeAreaProvider>

@@ -152,6 +152,43 @@ function rollingAverage(recentPreMultiplierScores, windowDays) {
   return sum / window.length;
 }
 
+// src/core/time.ts
+function localDate(timezone, now = /* @__PURE__ */ new Date()) {
+  try {
+    return new Intl.DateTimeFormat("en-CA", {
+      timeZone: timezone,
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit"
+    }).format(now);
+  } catch {
+    return now.toISOString().slice(0, 10);
+  }
+}
+function localHour(timezone, now = /* @__PURE__ */ new Date()) {
+  try {
+    const h = new Intl.DateTimeFormat("en-GB", {
+      timeZone: timezone,
+      hour: "2-digit",
+      hour12: false
+    }).format(now);
+    return parseInt(h, 10) % 24;
+  } catch {
+    return now.getUTCHours();
+  }
+}
+function isWithinLocalWindow(timezone, startHour, endHour, now = /* @__PURE__ */ new Date()) {
+  const h = localHour(timezone, now);
+  return h >= startHour && h < endHour;
+}
+function deviceTimezone() {
+  try {
+    return Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC";
+  } catch {
+    return "UTC";
+  }
+}
+
 // src/core/season.ts
 var MS_PER_DAY2 = 864e5;
 function dayNum(iso) {
@@ -1219,6 +1256,7 @@ export {
   computeDivisionChanges,
   createUniqueStream,
   dailySeed,
+  deviceTimezone,
   difficultyForDayOfWeek,
   fingerprint,
   generateDailyPuzzle,
@@ -1230,6 +1268,9 @@ export {
   inviteLink,
   isFinalsDay,
   isValidInviteCode,
+  isWithinLocalWindow,
+  localDate,
+  localHour,
   makeRng,
   matchHouseLeague,
   nextSeasonStart,

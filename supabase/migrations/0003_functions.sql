@@ -13,8 +13,9 @@ declare
   v_started timestamptz;
   v_gated   boolean;
 begin
-  -- Date-gate: refuse to start a future/unpublished puzzle.
-  select (published and play_date <= (now() at time zone 'utc')::date)
+  -- Date-gate: refuse to start an unpublished puzzle, or one beyond any user's local "today"
+  -- (UTC+1 day covers the furthest-ahead timezone). No one can start a genuinely future bout.
+  select (published and play_date <= ((now() at time zone 'utc')::date + 1))
     into v_gated from public.puzzles where id = p_puzzle;
   if not coalesce(v_gated, false) then
     raise exception 'puzzle_not_available';

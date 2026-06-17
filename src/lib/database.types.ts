@@ -18,6 +18,7 @@ export interface ProfileRow {
   created_at: string;
   push_token: string | null;
   push_platform: 'ios' | 'android' | null;
+  timezone: string;
   entitlements: Record<string, unknown>;
   stats: ProfileStats;
 }

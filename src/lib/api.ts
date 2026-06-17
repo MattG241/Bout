@@ -10,10 +10,12 @@ import type {
   LiveRaceRow,
 } from './database.types';
 import { generateInviteCode } from '@core/leagues';
+import { localDate, deviceTimezone } from '@core/time';
 import type { ScoreBreakdown } from '@core/scoring';
 
-export function utcToday(): string {
-  return new Date().toISOString().slice(0, 10);
+/** The user's LOCAL calendar date — the day whose bout they should see (Wordle-style). */
+export function today(): string {
+  return localDate(deviceTimezone());
 }
 
 // ---- Auth ----
@@ -41,11 +43,23 @@ export async function getProfile(userId: string): Promise<ProfileRow | null> {
 export async function ensureProfile(userId: string, handle: string): Promise<ProfileRow> {
   const { data, error } = await supabase
     .from('profiles')
-    .upsert({ id: userId, handle }, { onConflict: 'id' })
+    .upsert({ id: userId, handle, timezone: deviceTimezone() }, { onConflict: 'id' })
     .select('*')
     .single();
   if (error) throw error;
   return data;
+}
+/** Keep the stored timezone current (call on launch so the morning push stays accurate). */
+export async function syncTimezone(): Promise<void> {
+  const { data: auth } = await supabase.auth.getUser();
+  if (!auth.user) return;
+  await supabase.from('profiles').update({ timezone: deviceTimezone() }).eq('id', auth.user.id);
+}
+/** Permanently delete the account and all owned data (App Store requirement). */
+export async function deleteAccount(): Promise<void> {
+  const { error } = await supabase.functions.invoke('delete-account', { body: {} });
+  if (error) throw error;
+  await supabase.auth.signOut();
 }
 export async function handleAvailable(handle: string): Promise<boolean> {
   const { data } = await supabase.from('profiles').select('id').eq('handle', handle).maybeSingle();
@@ -144,7 +158,7 @@ export async function getTodayPuzzle(): Promise<PuzzleRow | null> {
   const { data } = await supabase
     .from('puzzles')
     .select('*')
-    .eq('play_date', utcToday())
+    .eq('play_date', today())
     .eq('published', true)
     .maybeSingle();
   return data ?? null;
@@ -195,7 +209,7 @@ export async function submitPrediction(
       user_id: auth.user.id,
       league_id: leagueId,
       season_id: seasonId,
-      play_date: utcToday(),
+      play_date: today(),
       predicted_top_user_id: predictedTopUserId,
     },
     { onConflict: 'user_id,league_id,play_date' },
@@ -210,7 +224,7 @@ export async function getMyPrediction(leagueId: string): Promise<PredictionRow |
     .select('*')
     .eq('user_id', auth.user.id)
     .eq('league_id', leagueId)
-    .eq('play_date', utcToday())
+    .eq('play_date', today())
     .maybeSingle();
   return data ?? null;
 }
