@@ -139,10 +139,10 @@ export default function Today() {
 function StreakPill({ streak }: { streak: number }) {
   return (
     <View style={styles.streakPill}>
-      <Text variant="data" mono color={streak > 0 ? colors.accent : colors.textTertiary}>
+      <Text variant="data" mono color={streak > 0 ? colors.accent : colors.textTertiary} numberOfLines={1}>
         {streak}
       </Text>
-      <Text variant="label" color={colors.textTertiary}>
+      <Text variant="label" color={colors.textTertiary} numberOfLines={1}>
         {streak === 1 ? 'DAY' : 'DAYS'}
       </Text>
     </View>

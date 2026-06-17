@@ -78,11 +78,13 @@ function Spacer() {
 
 function Stat({ label, value }: { label: string; value: string }) {
   return (
-    <View style={{ alignItems: 'center' }}>
-      <Text variant="data" mono>
+    <View style={{ alignItems: 'center', flex: 1 }}>
+      <Text variant="data" mono numberOfLines={1}>
         {value}
       </Text>
-      <Text variant="label" color={colors.textTertiary}>
+      {/* numberOfLines + a touch less tracking stops the trailing letter (e.g. the K in
+          STREAK) from being pushed onto a second line by letterSpacing. */}
+      <Text variant="label" color={colors.textTertiary} numberOfLines={1} style={{ letterSpacing: 1 }}>
         {label}
       </Text>
     </View>

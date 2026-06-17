@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Screen } from '@/components/Screen';
@@ -49,6 +49,11 @@ export default function RaceScreen() {
   const isHost = race.host_user_id === userId;
   const finished = [...participants].filter((p) => p.place != null).sort((a, b) => (a.place ?? 0) - (b.place ?? 0));
 
+  const handleSubmissionChange = useCallback((s: unknown, r: boolean) => {
+    setSubmission(s);
+    setReady(r);
+  }, []);
+
   const submitRace = async () => {
     if (!puzzle || !ready) return;
     // Scoring + timing happen server-side (the client doesn't hold the solution).
@@ -82,14 +87,7 @@ export default function RaceScreen() {
       ) : null}
 
       {race.status === 'racing' && puzzle && !finishedLocally ? (
-        <PuzzleRenderer
-          type={puzzle.type}
-          payload={puzzle.payload}
-          onSubmissionChange={(s, r) => {
-            setSubmission(s);
-            setReady(r);
-          }}
-        />
+        <PuzzleRenderer type={puzzle.type} payload={puzzle.payload} onSubmissionChange={handleSubmissionChange} />
       ) : null}
 
       {(race.status === 'racing' && finishedLocally) || race.status === 'finished' ? (

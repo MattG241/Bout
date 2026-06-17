@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { View, StyleSheet, Pressable, Alert } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Screen } from '@/components/Screen';
@@ -74,6 +74,13 @@ export default function Play() {
     }
   };
 
+  // Stable identity so the puzzle renderer's effect (which lists this in its deps) doesn't
+  // re-fire every render — that was causing an infinite update loop.
+  const handleSubmissionChange = useCallback((s: unknown, r: boolean) => {
+    setSubmission(s);
+    setReady(r);
+  }, []);
+
   const confirmQuit = () => {
     Alert.alert('Leave the bout?', 'Your timer is running. You can come back, but the clock keeps ticking.', [
       { text: 'Stay', style: 'cancel' },
@@ -113,14 +120,7 @@ export default function Play() {
         {TYPE_LABELS[puzzle.type].toUpperCase()}
       </Text>
       <Spacer size={spacing.xl} />
-      <PuzzleRenderer
-        type={puzzle.type}
-        payload={puzzle.payload}
-        onSubmissionChange={(s, r) => {
-          setSubmission(s);
-          setReady(r);
-        }}
-      />
+      <PuzzleRenderer type={puzzle.type} payload={puzzle.payload} onSubmissionChange={handleSubmissionChange} />
       <Spacer size={spacing.xxl} />
     </Screen>
   );
