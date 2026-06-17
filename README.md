@@ -11,7 +11,7 @@ content-first black-and-white (BeReal-style restraint) with a single rationed ac
 
 ## Stack
 
-- **App**: React Native + Expo (SDK 52) + TypeScript + Expo Router. iOS & Android first-class.
+- **App**: React Native + Expo (SDK 54) + TypeScript + Expo Router. iOS & Android first-class.
 - **Backend**: Supabase — Postgres, Auth, Realtime, Edge Functions. Server-authoritative for
   everything competitive. The client never holds a puzzle solution before submission.
 - **Shared core**: `src/core` is pure, dependency-free TypeScript (scoring, puzzles, seasons).

@@ -7,7 +7,7 @@ import * as Sharing from 'expo-sharing';
  * Capture a card view to a PNG and hand it to the native share sheet (iOS & Android).
  * Returns false if sharing isn't available so the caller can fall back gracefully.
  */
-export async function shareCardImage(ref: RefObject<View>): Promise<boolean> {
+export async function shareCardImage(ref: RefObject<View | null>): Promise<boolean> {
   if (!ref.current) return false;
   const uri = await captureRef(ref, { format: 'png', quality: 1, result: 'tmpfile' });
   const available = await Sharing.isAvailableAsync();
