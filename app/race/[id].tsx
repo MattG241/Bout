@@ -13,8 +13,8 @@ import type { LiveRaceRow, LiveRaceParticipantRow, PuzzleRow } from '@/lib/datab
 import { colors, spacing } from '@/design/tokens';
 
 /**
- * Live race screen. Lobby → racing → finished, synced over Realtime. We score the local solve
- * with the shared core ONLY to rank the race for fun; it never writes to the season ladder.
+ * Live race screen. Lobby → racing → finished, synced over Realtime. The solve is scored
+ * server-side (score-race) purely to rank the race for fun; it never writes to the season ladder.
  */
 export default function RaceScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -42,7 +42,6 @@ export default function RaceScreen() {
     refresh();
     const unsub = subscribeRace(id, refresh);
     return unsub;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   if (!race) return <Screen><Loading label="Joining the race" /></Screen>;

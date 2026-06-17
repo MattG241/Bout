@@ -31,7 +31,6 @@ export default function RaceLobby() {
   };
   useEffect(() => {
     load();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [league?.id]);
 
   const host = async () => {

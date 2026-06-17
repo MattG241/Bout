@@ -49,7 +49,6 @@ export function useBootstrap(): { state: BootstrapState; refresh: () => Promise<
       active = false;
       sub.subscription.unsubscribe();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return { state, refresh };
