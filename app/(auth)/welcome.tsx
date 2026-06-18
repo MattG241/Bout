@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Image } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Screen } from '@/components/Screen';
 import { Text } from '@/components/Text';
@@ -8,7 +8,11 @@ import { Input } from '@/components/Input';
 import { Spacer, Divider, Eyebrow } from '@/components/atoms';
 import { signInGuest, signInWithEmail, signUpWithEmail } from '@/lib/api';
 import { useBootstrapState } from '@/providers/Bootstrap';
-import { colors, spacing } from '@/design/tokens';
+import { colors, spacing, radius } from '@/design/tokens';
+
+// The brand logo (assets/icon.png) — swap that file via `node scripts/apply-logo.mjs`.
+// eslint-disable-next-line @typescript-eslint/no-require-imports -- require() is the RN way to reference a bundled asset
+const logo = require('../../assets/icon.png');
 
 /**
  * Welcome — the brand statement and the frictionless way in. Guest sign-in is the default
@@ -40,6 +44,8 @@ export default function Welcome() {
   return (
     <Screen contentStyle={styles.container}>
       <View style={styles.hero}>
+        <Image source={logo} style={styles.logo} resizeMode="contain" />
+        <Spacer size={spacing.xl} />
         <Eyebrow color={colors.accent}>DAILY BRAIN GAME · YOUR CREW</Eyebrow>
         <Spacer size={spacing.md} />
         <Text variant="display">BOUT</Text>
@@ -107,4 +113,5 @@ export default function Welcome() {
 const styles = StyleSheet.create({
   container: { justifyContent: 'space-between', paddingVertical: spacing.xxxl },
   hero: { flex: 1, justifyContent: 'center' },
+  logo: { width: 88, height: 88, borderRadius: radius.lg },
 });
