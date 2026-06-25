@@ -18,8 +18,13 @@ import {
   rankStandings,
 } from '../supabase/functions/_shared/core.mjs';
 
+import { readFileSync } from 'node:fs';
+
 const OUT = 'assets/screenshots';
 mkdirSync(OUT, { recursive: true });
+
+// Embed the real app logo so the welcome screen matches the shipped app.
+const LOGO = 'data:image/png;base64,' + readFileSync('assets/icon.png').toString('base64');
 
 // ---- Real data from the core ----
 const numberPuzzle = createUniqueStream({ type: 'number', difficulty: 'medium', salt: 's1' }).next();
@@ -77,6 +82,7 @@ function welcome() {
   return `${statusbar()}
   <div class="content" style="display:flex;flex-direction:column;justify-content:space-between;height:740px;padding-bottom:48px;">
     <div style="flex:1;display:flex;flex-direction:column;justify-content:center;">
+      <img src="${LOGO}" style="width:104px;height:104px;margin-bottom:24px;" />
       <div class="label" style="color:${C.accent}">DAILY BRAIN GAME · YOUR CREW</div>
       <div class="display" style="margin-top:12px;">BOUT</div>
       <div class="body secondary" style="margin-top:10px;max-width:300px;">One puzzle a day. Same bout for everyone. Your result feeds a season-long crew ladder. Step into the ring.</div>
@@ -354,12 +360,32 @@ function settings() {
         <div class="switch on"><span></span></div>
       </div>
     </div>
+    <div class="card" style="margin-top:16px;">
+      <div class="label">FEEDBACK</div>
+      <div style="display:flex;align-items:center;gap:12px;margin-top:8px;">
+        <div style="flex:1;"><div class="body">Sound effects</div><div class="body tertiary" style="font-size:13px;">Subtle cues for taps, submits, and the result bell. Respects your silent switch.</div></div>
+        <div class="switch on"><span></span></div>
+      </div>
+      <div class="hr"></div>
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div style="flex:1;"><div class="body">Haptics</div><div class="body tertiary" style="font-size:13px;">Light vibration on key actions.</div></div>
+        <div class="switch on"><span></span></div>
+      </div>
+    </div>
     <div class="card raised" style="margin-top:16px;">
       <div class="label" style="color:${C.accent}">SEASON PASS</div>
       <div class="heading" style="margin-top:8px;">Go deeper</div>
       <div class="body secondary" style="margin-top:8px;">Deeper stats, advanced puzzles, larger custom leagues, and the ability to create your crew's own bouts. Never pay-to-win.</div>
       <div class="btn primary" style="margin-top:16px;">Get the season pass</div>
     </div>
+    <div class="card" style="margin-top:16px;">
+      <div class="label">ABOUT</div>
+      <div class="brow" style="margin-top:4px;"><span class="body">Privacy policy</span><span class="tertiary">›</span></div>
+      <div class="hr"></div>
+      <div class="brow"><span class="body">Terms of service</span><span class="tertiary">›</span></div>
+    </div>
+    <div style="margin-top:24px;text-align:center;color:${C.ter};font-weight:600;">Sign out</div>
+    <div class="btn" style="margin-top:16px;border:1px solid ${C.danger};color:${C.danger};">Delete account</div>
   </div>${tabbar('settings')}`;
 }
 

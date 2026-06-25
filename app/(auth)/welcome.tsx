@@ -8,7 +8,7 @@ import { Input } from '@/components/Input';
 import { Spacer, Divider, Eyebrow } from '@/components/atoms';
 import { signInGuest, signInWithEmail, signUpWithEmail } from '@/lib/api';
 import { useBootstrapState } from '@/providers/Bootstrap';
-import { colors, spacing, radius } from '@/design/tokens';
+import { colors, spacing } from '@/design/tokens';
 
 // The brand logo (assets/icon.png) — swap that file via `node scripts/apply-logo.mjs`.
 // eslint-disable-next-line @typescript-eslint/no-require-imports -- require() is the RN way to reference a bundled asset
@@ -113,5 +113,7 @@ export default function Welcome() {
 const styles = StyleSheet.create({
   container: { justifyContent: 'space-between', paddingVertical: spacing.xxxl },
   hero: { flex: 1, justifyContent: 'center' },
-  logo: { width: 88, height: 88, borderRadius: radius.lg },
+  // Full app-icon tile; its own rounded corners + black edges blend into the black screen,
+  // so no extra borderRadius (that was clipping the artwork and looking off).
+  logo: { width: 104, height: 104 },
 });
