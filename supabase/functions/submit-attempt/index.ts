@@ -28,8 +28,11 @@ Deno.serve(async (req) => {
       .eq('id', puzzleId)
       .single();
     if (pErr || !puzzle) return errorResponse('unknown_puzzle', 404);
-    const todayUtc = new Date().toISOString().slice(0, 10);
-    if (!puzzle.published || puzzle.play_date > todayUtc) return errorResponse('puzzle_not_available', 403);
+    // Allow play_date up to UTC "tomorrow" so users in timezones ahead of UTC (e.g. Australia)
+    // can submit their local-today bout. This matches the RLS read-gate and start_attempt, which
+    // both allow play_date <= (UTC date + 1). A strict-UTC gate here wrongly rejected those users.
+    const utcCutoff = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
+    if (!puzzle.published || puzzle.play_date > utcCutoff) return errorResponse('puzzle_not_available', 403);
 
     const { data: sol, error: sErr } = await db
       .from('puzzle_solutions')

@@ -228,9 +228,34 @@ export async function submitAttempt(puzzleId: string, submission: unknown): Prom
   const { data, error } = await supabase.functions.invoke('submit-attempt', {
     body: { puzzleId, submission },
   });
-  if (error) throw error;
-  if ((data as any)?.error) throw new Error((data as any).error);
+  if (error) {
+    // supabase-js surfaces a generic "non-2xx" message; pull the real reason from the body.
+    let code: string | undefined;
+    try {
+      code = (await (error as any).context?.json?.())?.error;
+    } catch {
+      /* response body unavailable */
+    }
+    throw new Error(friendlySubmitError(code) ?? (error as Error).message);
+  }
+  if ((data as any)?.error) throw new Error(friendlySubmitError((data as any).error) ?? (data as any).error);
   return data as SubmitResult;
+}
+
+/** Maps server error codes to clear, player-facing messages. */
+function friendlySubmitError(code?: string): string | undefined {
+  switch (code) {
+    case 'already_attempted':
+      return "You've already played today's bout. Come back tomorrow!";
+    case 'puzzle_not_available':
+      return "Today's bout isn't open yet — give it a moment and try again.";
+    case 'unknown_puzzle':
+      return "We couldn't find today's bout. Pull to refresh and try again.";
+    case 'unauthorized':
+      return 'Please sign in again to submit.';
+    default:
+      return code ? `Couldn't submit (${code}).` : undefined;
+  }
 }
 
 // ---- Pick'em ----
