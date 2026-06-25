@@ -84,7 +84,7 @@
     "extra": {
       "supabaseUrl": "https://fklltgfczcxegijwdeax.supabase.co",
       "supabaseAnonKey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZrbGx0Z2ZjemN4ZWdpandkZWF4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE2ODk1NDksImV4cCI6MjA5NzI2NTU0OX0.Babc6uPjNTv6QZgu9_UWSEKvkGaEaxYp0E-9DmCZ0xA",
-      "revenueCatApiKeyIos": "YOUR_RC_IOS_KEY",
+      "revenueCatApiKeyIos": "appl_PvgtaPBrUqJalIRnumseKFwAmzD",
       "revenueCatApiKeyAndroid": "YOUR_RC_ANDROID_KEY",
       "eas": {
         "projectId": "10dd5928-079f-4ae3-9194-bdd6edd522c5"
