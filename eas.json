@@ -22,9 +22,9 @@
   "submit": {
     "production": {
       "ios": {
-        "appleId": "YOUR_APPLE_ID",
-        "ascAppId": "YOUR_ASC_APP_ID",
-        "appleTeamId": "YOUR_TEAM_ID"
+        "appleId": "matthew@ryderwear.com.au",
+        "ascAppId": "6784204484",
+        "appleTeamId": "DNS7GY854U"
       },
       "android": {
         "serviceAccountKeyPath": "./play-service-account.json",
