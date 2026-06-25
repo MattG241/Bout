@@ -20,13 +20,28 @@ export function isMonetizationConfigured(): boolean {
 
 /** Idempotently configure RevenueCat for the signed-in user. Safe no-op when unconfigured. */
 export async function initPurchases(appUserId?: string): Promise<void> {
-  if (initialized || !isMonetizationConfigured()) return;
+  if (!isMonetizationConfigured()) return;
   const apiKey = Platform.OS === 'ios' ? env.revenueCatApiKeyIos : env.revenueCatApiKeyAndroid;
   try {
-    Purchases.configure({ apiKey, appUserID: appUserId });
-    initialized = true;
+    if (!initialized) {
+      Purchases.configure({ apiKey, appUserID: appUserId });
+      initialized = true;
+    } else if (appUserId) {
+      // Already configured (e.g. as an anonymous user) — bind purchases to this account.
+      await Purchases.logIn(appUserId);
+    }
   } catch {
     // Leave uninitialized; the app stays fully functional without purchases.
+  }
+}
+
+/** Detach the current user from RevenueCat on sign-out. */
+export async function logoutPurchases(): Promise<void> {
+  if (!initialized) return;
+  try {
+    await Purchases.logOut();
+  } catch {
+    // ignore
   }
 }
 

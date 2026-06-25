@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, Switch, Alert, Linking, Pressable } from 'react-native';
+import { View, StyleSheet, Switch, Alert, Linking, Pressable, Platform } from 'react-native';
 import { Screen } from '@/components/Screen';
 import { Text } from '@/components/Text';
 import { Card } from '@/components/Card';
@@ -9,7 +9,7 @@ import { useStore } from '@/store/useStore';
 import { usePrefs } from '@/lib/prefs';
 import { playCue } from '@/lib/sound';
 import { useBootstrapState } from '@/providers/Bootstrap';
-import { signOut, deleteAccount } from '@/lib/api';
+import { signOut, deleteAccount, setProfileEntitlements, getDeepStats, type DeepStats } from '@/lib/api';
 import { registerForPushNotifications } from '@/lib/notifications';
 import {
   getEntitlements,
@@ -29,11 +29,18 @@ export default function Settings() {
   const { refresh } = useBootstrapState();
   const [pushOn, setPushOn] = useState(!!profile?.push_token);
   const [entitlements, setEntitlements] = useState<string[]>([]);
+  const [deepStats, setDeepStats] = useState<DeepStats | null>(null);
   const [busy, setBusy] = useState(false);
+
+  // Server-authoritative entitlement (set by the RevenueCat webhook) OR the live client check.
+  const premium = profile?.entitlements?.[ENTITLEMENT_PREMIUM] === true || hasPremium(entitlements);
 
   useEffect(() => {
     getEntitlements().then(setEntitlements);
   }, []);
+  useEffect(() => {
+    if (premium) getDeepStats().then(setDeepStats);
+  }, [premium]);
 
   const togglePush = async (next: boolean) => {
     setPushOn(next);
@@ -49,13 +56,28 @@ export default function Settings() {
   const buyPremium = async () => {
     setBusy(true);
     const res = await purchasePremium();
-    setBusy(false);
     if (res.success) {
       setEntitlements(res.entitlements);
-      Alert.alert('Welcome to the season pass', 'Deeper stats and advanced puzzles unlocked.');
+      // Mirror to the profile so premium reflects instantly (webhook re-confirms server-side).
+      await setProfileEntitlements(res.entitlements);
+      await refresh();
+      setBusy(false);
+      Alert.alert('Welcome to the season pass', 'Deeper stats and advanced bouts unlocked.');
     } else {
-      Alert.alert('Not completed', isMonetizationConfigured() ? 'Purchase was cancelled.' : 'Store not configured in this build.');
+      setBusy(false);
+      Alert.alert('Not completed', isMonetizationConfigured() ? 'Purchase was cancelled.' : 'Store not configured in this build yet.');
     }
+  };
+
+  const restore = async () => {
+    setBusy(true);
+    const ents = await restorePurchases();
+    setEntitlements(ents);
+    if (ents.length) {
+      await setProfileEntitlements(ents);
+      await refresh();
+    }
+    setBusy(false);
   };
 
   const doSignOut = async () => {
@@ -97,8 +119,6 @@ export default function Settings() {
       ],
     );
   };
-
-  const premium = hasPremium(entitlements);
 
   return (
     <Screen scroll>
@@ -198,19 +218,60 @@ export default function Settings() {
         </Text>
         <Spacer size={spacing.lg} />
         {premium ? (
-          <Button label="Manage subscription" variant="secondary" onPress={() => Alert.alert('Subscription', 'Managed in the App Store / Play Store.')} />
+          <Button
+            label="Manage subscription"
+            variant="secondary"
+            onPress={() =>
+              Linking.openURL(
+                Platform.OS === 'ios'
+                  ? 'https://apps.apple.com/account/subscriptions'
+                  : 'https://play.google.com/store/account/subscriptions',
+              )
+            }
+          />
         ) : (
           <>
             <Button label="Get the season pass" loading={busy} onPress={buyPremium} />
             <Spacer size={spacing.sm} />
-            <Button label="Restore purchases" variant="ghost" onPress={async () => setEntitlements(await restorePurchases())} />
+            <Button label="Restore purchases" variant="ghost" onPress={restore} />
           </>
         )}
-        {entitlements.length === 0 && !isMonetizationConfigured() ? (
+        {!isMonetizationConfigured() ? (
           <Text variant="caption" color={colors.textTertiary} style={{ marginTop: spacing.sm }}>
             Store keys not set in this build (monetization layer is fully optional).
           </Text>
         ) : null}
+      </Card>
+
+      <Spacer size={spacing.lg} />
+
+      {/* Deeper stats — a real entitlement-gated unlock */}
+      <Card>
+        <View style={styles.switchRow}>
+          <Eyebrow color={premium ? colors.accent : colors.textTertiary}>DEEPER STATS</Eyebrow>
+          {!premium ? (
+            <Text variant="label" color={colors.textTertiary}>
+              LOCKED
+            </Text>
+          ) : null}
+        </View>
+        <Spacer size={spacing.sm} />
+        {premium ? (
+          <>
+            <Row label="Bouts played" value={`${deepStats?.played ?? 0}`} />
+            <Divider />
+            <Row label="Average accuracy" value={`${Math.round((deepStats?.avgAccuracy ?? 0) * 100)}%`} />
+            <Divider />
+            <Row label="Completion rate" value={`${Math.round((deepStats?.completionRate ?? 0) * 100)}%`} />
+            <Divider />
+            <Row label="Best score" value={`${deepStats?.bestScore ?? 0}`} />
+          </>
+        ) : (
+          <Text variant="body" color={colors.textSecondary}>
+            See your average accuracy, completion rate, and best-ever score. Unlocked with the
+            Season Pass.
+          </Text>
+        )}
       </Card>
 
       <Spacer size={spacing.xl} />
@@ -224,12 +285,12 @@ export default function Settings() {
           <Text variant="body" color={colors.textTertiary}>›</Text>
         </Pressable>
         <Divider />
-        <Pressable style={styles.row} onPress={() => Linking.openURL('https://bout.app/privacy')}>
+        <Pressable style={styles.row} onPress={() => router.push('/legal/privacy')}>
           <Text variant="body">Privacy policy</Text>
           <Text variant="body" color={colors.textTertiary}>›</Text>
         </Pressable>
         <Divider />
-        <Pressable style={styles.row} onPress={() => Linking.openURL('https://bout.app/terms')}>
+        <Pressable style={styles.row} onPress={() => router.push('/legal/terms')}>
           <Text variant="body">Terms of service</Text>
           <Text variant="body" color={colors.textTertiary}>›</Text>
         </Pressable>

@@ -61,6 +61,43 @@ export async function deleteAccount(): Promise<void> {
   if (error) throw error;
   await supabase.auth.signOut();
 }
+
+/**
+ * Mirror active entitlements onto the profile immediately after a client-side purchase, so
+ * premium reflects instantly (the RevenueCat webhook also re-confirms this server-side).
+ */
+export async function setProfileEntitlements(entitlements: string[]): Promise<void> {
+  const { data: auth } = await supabase.auth.getUser();
+  if (!auth.user) return;
+  const map: Record<string, boolean> = {};
+  for (const e of entitlements) map[e] = true;
+  await supabase.from('profiles').update({ entitlements: map }).eq('id', auth.user.id);
+}
+
+export interface DeepStats {
+  played: number;
+  avgAccuracy: number;
+  bestScore: number;
+  completionRate: number;
+}
+/** Premium "deeper stats" computed from the user's attempt history. */
+export async function getDeepStats(): Promise<DeepStats> {
+  const { data: auth } = await supabase.auth.getUser();
+  if (!auth.user) return { played: 0, avgAccuracy: 0, bestScore: 0, completionRate: 0 };
+  const { data } = await supabase
+    .from('attempts')
+    .select('final_score, accuracy, completed')
+    .eq('user_id', auth.user.id);
+  const rows = data ?? [];
+  if (rows.length === 0) return { played: 0, avgAccuracy: 0, bestScore: 0, completionRate: 0 };
+  const played = rows.length;
+  return {
+    played,
+    avgAccuracy: rows.reduce((a: number, r: any) => a + Number(r.accuracy), 0) / played,
+    bestScore: Math.max(...rows.map((r: any) => r.final_score)),
+    completionRate: rows.filter((r: any) => r.completed).length / played,
+  };
+}
 export async function handleAvailable(handle: string): Promise<boolean> {
   const { data } = await supabase.from('profiles').select('id').eq('handle', handle).maybeSingle();
   return !data;

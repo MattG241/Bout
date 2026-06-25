@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { getProfile, getMyLeagues, syncTimezone } from '@/lib/api';
+import { initPurchases, logoutPurchases } from '@/lib/monetization';
 import { useStore } from '@/store/useStore';
 
 export type BootstrapState = 'loading' | 'signed-out' | 'needs-handle' | 'needs-league' | 'ready';
@@ -18,9 +19,12 @@ export function useBootstrap(): { state: BootstrapState; refresh: () => Promise<
     if (!userId) {
       setProfile(null);
       setLeagues([]);
+      logoutPurchases().catch(() => {});
       setState('signed-out');
       return;
     }
+    // Bind in-app purchases to this account (no-op until RevenueCat keys are set).
+    initPurchases(userId).catch(() => {});
     const profile = await getProfile(userId);
     setProfile(profile);
     if (!profile) {

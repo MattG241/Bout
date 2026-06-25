@@ -3,10 +3,10 @@ import React, { useEffect } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
-import { Stack } from 'expo-router';
+import { Stack, router } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { BootstrapProvider } from '@/providers/Bootstrap';
-import { registerForPushNotifications, setupNotificationChannels } from '@/lib/notifications';
+import { registerForPushNotifications, setupNotificationChannels, addNotificationTapListener } from '@/lib/notifications';
 import { initSound } from '@/lib/sound';
 import { colors } from '@/design/tokens';
 
@@ -41,6 +41,7 @@ export default function RootLayout() {
             <Stack.Screen name="result" options={{ presentation: 'modal', animation: 'slide_from_bottom' }} />
             <Stack.Screen name="race" />
             <Stack.Screen name="join/[code]" />
+            <Stack.Screen name="legal/[doc]" />
           </Stack>
         </BootstrapProvider>
       </SafeAreaProvider>
@@ -48,10 +49,15 @@ export default function RootLayout() {
   );
 }
 
-/** Registers for push once we have a session (best-effort, never blocks the UI). */
+/** Registers for push and routes notification taps to the day's bout. Best-effort, never blocks. */
 function PushRegistration() {
   useEffect(() => {
     registerForPushNotifications().catch(() => {});
+    // Tapping the daily drop takes you to Today (where the bout is ready to play).
+    const unsub = addNotificationTapListener(() => {
+      router.navigate('/(tabs)');
+    });
+    return unsub;
   }, []);
   return null;
 }

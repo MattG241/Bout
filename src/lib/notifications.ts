@@ -71,3 +71,16 @@ export async function registerForPushNotifications(): Promise<string | null> {
   }
   return token;
 }
+
+/**
+ * Register a handler for when the user taps a notification. Returns an unsubscribe fn.
+ * No-op in Expo Go. The daily-drop payload carries { type, playDate, puzzleId }.
+ */
+export function addNotificationTapListener(onTap: (data: Record<string, unknown>) => void): () => void {
+  const Notifications = loadNotifications();
+  if (!Notifications) return () => {};
+  const sub = Notifications.addNotificationResponseReceivedListener((response) => {
+    onTap(response.notification.request.content.data ?? {});
+  });
+  return () => sub.remove();
+}
