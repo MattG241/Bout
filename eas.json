@@ -22,9 +22,11 @@
   "submit": {
     "production": {
       "ios": {
-        "appleId": "mgroves5022@outlook.com",
         "ascAppId": "6784204484",
-        "appleTeamId": "DNS7GY854U"
+        "appleTeamId": "DNS7GY854U",
+        "ascApiKeyPath": "./AuthKey_9TYYJ3A5FT.p8",
+        "ascApiKeyId": "9TYYJ3A5FT",
+        "ascApiKeyIssuerId": "6d55bf6b-3e20-4a6d-a259-f0ee7136efcb"
       },
       "android": {
         "serviceAccountKeyPath": "./play-service-account.json",

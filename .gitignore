@@ -43,3 +43,7 @@ supabase/.temp
 
 # test
 coverage/
+
+# App Store Connect API keys (never commit)
+AuthKey_*.p8
+*.p8
