@@ -46,5 +46,12 @@ Primary: Games / Word. Secondary: Games / Trivia.
 ## Age rating
 4+ / Everyone. No gambling, no real-money wagering, no user-generated public content.
 
+## URLs (for the store listings)
+- Privacy Policy: https://mattg241.github.io/Bout/privacy.html
+- Terms of Service: https://mattg241.github.io/Bout/terms.html
+- Marketing / support: https://mattg241.github.io/Bout/
+  (These go live once GitHub Pages is enabled — Repo Settings → Pages → Deploy from a branch →
+  `/docs`. Confirm the exact base URL there; update these if it differs.)
+
 ## Support
-support@bout.app · https://bout.app
+support@bout.app

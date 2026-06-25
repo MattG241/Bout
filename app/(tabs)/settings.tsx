@@ -13,7 +13,6 @@ import { signOut, deleteAccount, setProfileEntitlements, getDeepStats, type Deep
 import { registerForPushNotifications } from '@/lib/notifications';
 import {
   getEntitlements,
-  purchasePremium,
   restorePurchases,
   isMonetizationConfigured,
   hasPremium,
@@ -50,22 +49,6 @@ export default function Settings() {
         setPushOn(false);
         Alert.alert('Notifications off', 'Enable notifications in system settings to get the daily drop.');
       }
-    }
-  };
-
-  const buyPremium = async () => {
-    setBusy(true);
-    const res = await purchasePremium();
-    if (res.success) {
-      setEntitlements(res.entitlements);
-      // Mirror to the profile so premium reflects instantly (webhook re-confirms server-side).
-      await setProfileEntitlements(res.entitlements);
-      await refresh();
-      setBusy(false);
-      Alert.alert('Welcome to the season pass', 'Deeper stats and advanced bouts unlocked.');
-    } else {
-      setBusy(false);
-      Alert.alert('Not completed', isMonetizationConfigured() ? 'Purchase was cancelled.' : 'Store not configured in this build yet.');
     }
   };
 
@@ -231,9 +214,9 @@ export default function Settings() {
           />
         ) : (
           <>
-            <Button label="Get the season pass" loading={busy} onPress={buyPremium} />
+            <Button label="Get the season pass" onPress={() => router.push('/paywall')} />
             <Spacer size={spacing.sm} />
-            <Button label="Restore purchases" variant="ghost" onPress={restore} />
+            <Button label="Restore purchases" variant="ghost" loading={busy} onPress={restore} />
           </>
         )}
         {!isMonetizationConfigured() ? (

@@ -5,8 +5,10 @@
  * bout, the ladder, or fairness.
  */
 import { Platform } from 'react-native';
-import Purchases, { type PurchasesOffering, type CustomerInfo } from 'react-native-purchases';
+import Purchases, { type PurchasesOffering, type CustomerInfo, type PurchasesPackage } from 'react-native-purchases';
 import { env } from './env';
+
+export type { PurchasesPackage } from 'react-native-purchases';
 
 export const ENTITLEMENT_PREMIUM = 'season_pass';
 export const ENTITLEMENT_COSMETICS = 'cosmetics';
@@ -52,6 +54,23 @@ export async function getCurrentOffering(): Promise<PurchasesOffering | null> {
     return offerings.current ?? null;
   } catch {
     return null;
+  }
+}
+
+/** The purchasable packages (e.g. monthly + annual), with localized store prices. */
+export async function getPackages(): Promise<PurchasesPackage[]> {
+  const offering = await getCurrentOffering();
+  return offering?.availablePackages ?? [];
+}
+
+/** Purchase a specific package (from the paywall). */
+export async function purchase(pkg: PurchasesPackage): Promise<{ success: boolean; entitlements: string[] }> {
+  if (!isMonetizationConfigured()) return { success: false, entitlements: [] };
+  try {
+    const { customerInfo } = await Purchases.purchasePackage(pkg);
+    return { success: true, entitlements: activeEntitlements(customerInfo) };
+  } catch {
+    return { success: false, entitlements: await getEntitlements() };
   }
 }
 
