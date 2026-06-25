@@ -61,9 +61,31 @@ const ICONS = {
   season: '<path d="M8 21h8M12 17v4M7 4h10v4a5 5 0 0 1-10 0z"/><path d="M17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3"/>',
   crew: '<circle cx="9" cy="8" r="3"/><path d="M3 20a6 6 0 0 1 12 0"/><path d="M16 6a3 3 0 0 1 0 6M18 20a6 6 0 0 0-3-5.2"/>',
   settings: '<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/>',
+  bolt: '<path d="M13 2 4 14h7l-1 8 9-12h-7z"/>',
 };
 const icon = (name, color) =>
   `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${ICONS[name]}</svg>`;
+const bigIcon = (name, color) =>
+  `<svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">${ICONS[name]}</svg>`;
+
+// First-run tour slide (matches app/(auth)/tour.tsx)
+function tourSlide(iconName, iconColor, eyebrow, title, body, activeDot) {
+  const dots = [0, 1, 2, 3, 4].map((i) => `<span class="tdotp ${i === activeDot ? 'on' : ''}"></span>`).join('');
+  return `<div style="display:flex;flex-direction:column;height:844px;">
+    ${statusbar()}
+    <div style="height:40px;text-align:right;padding:0 24px;color:${C.ter};font-weight:600;line-height:40px;">${activeDot === 4 ? '' : 'Skip'}</div>
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 40px;text-align:center;">
+      <div class="touricon">${bigIcon(iconName, iconColor)}</div>
+      <div class="label" style="color:${C.accent};margin-top:32px;">${eyebrow}</div>
+      <div class="title" style="margin-top:12px;">${title}</div>
+      <div class="body secondary" style="margin-top:12px;max-width:300px;line-height:1.5;">${body}</div>
+    </div>
+    <div style="padding:0 24px 24px;">
+      <div style="display:flex;justify-content:center;gap:8px;">${dots}</div>
+      <div class="btn primary" style="margin-top:24px;">${activeDot === 4 ? "Let's go" : 'Next'}</div>
+    </div>
+  </div>`;
+}
 
 function tabbar(active) {
   const tabs = ['today', 'ladder', 'season', 'crew', 'settings'];
@@ -472,6 +494,9 @@ const CSS = `
   .tabbar{position:absolute;bottom:0;left:0;right:0;height:84px;border-top:1px solid ${C.border};display:flex;justify-content:space-around;padding-top:10px;background:${C.bg};}
   .tab{display:flex;flex-direction:column;align-items:center;gap:5px;font-size:11px;font-weight:600;color:${C.ter};}
   .tab.active{color:${C.text};}
+  .touricon{width:120px;height:120px;border-radius:22px;border:1px solid ${C.border};background:${C.surface};display:flex;align-items:center;justify-content:center;}
+  .tdotp{width:7px;height:7px;border-radius:4px;background:${C.borderStrong};display:inline-block;}
+  .tdotp.on{background:${C.accent};width:22px;}
 `;
 
 const SCREENS = {
@@ -487,6 +512,9 @@ const SCREENS = {
   '10-crew': crew(),
   '11-settings': settings(),
   '12-live-race': race(),
+  '13-tour-1': tourSlide('bolt', C.accent, 'THE DAILY BOUT', 'One puzzle a day', "Everyone in your crew gets the same single puzzle each day. Solve it whenever suits — one to three minutes. No grinding.", 0),
+  '14-tour-3': tourSlide('ladder', C.text, 'THE LADDER', 'Climb your crew ladder', 'Your score feeds a season-long ladder with weight-class divisions and a finals week where scores double.', 2),
+  '15-tour-5': tourSlide('crew', C.text, 'BRING YOUR CREW', 'Better with mates', "Share an invite to start a private gym, or get matched into a house league of similar players. Time to step in.", 4),
 };
 
 const page = (body) => `<!doctype html><html><head><meta charset="utf-8"><style>${CSS}</style></head><body><div class="phone">${body}</div></body></html>`;

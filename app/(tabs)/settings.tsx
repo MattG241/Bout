@@ -219,6 +219,11 @@ export default function Settings() {
       <Card>
         <Eyebrow>ABOUT</Eyebrow>
         <Spacer size={spacing.sm} />
+        <Pressable style={styles.row} onPress={() => router.push('/(auth)/tour?replay=1')}>
+          <Text variant="body">How to play</Text>
+          <Text variant="body" color={colors.textTertiary}>›</Text>
+        </Pressable>
+        <Divider />
         <Pressable style={styles.row} onPress={() => Linking.openURL('https://bout.app/privacy')}>
           <Text variant="body">Privacy policy</Text>
           <Text variant="body" color={colors.textTertiary}>›</Text>

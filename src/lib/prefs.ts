@@ -9,8 +9,11 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 interface Prefs {
   soundEnabled: boolean;
   hapticsEnabled: boolean;
+  /** First-run "how it works" tour — shown once, then never again on this install. */
+  hasSeenTour: boolean;
   setSoundEnabled: (v: boolean) => void;
   setHapticsEnabled: (v: boolean) => void;
+  setHasSeenTour: (v: boolean) => void;
 }
 
 export const usePrefs = create<Prefs>()(
@@ -18,8 +21,10 @@ export const usePrefs = create<Prefs>()(
     (set) => ({
       soundEnabled: true,
       hapticsEnabled: true,
+      hasSeenTour: false,
       setSoundEnabled: (soundEnabled) => set({ soundEnabled }),
       setHapticsEnabled: (hapticsEnabled) => set({ hapticsEnabled }),
+      setHasSeenTour: (hasSeenTour) => set({ hasSeenTour }),
     }),
     { name: 'bout-prefs', storage: createJSONStorage(() => AsyncStorage) },
   ),
