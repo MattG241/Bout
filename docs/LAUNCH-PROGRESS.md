@@ -2,6 +2,12 @@
 
 Last updated: 2026-06-25. Legend: ✅ done · 👉 **you are here** · ⬜ to do.
 
+> ⚠️ **Pending deploy — timezone submit fix.** `submit-attempt` rejected the daily bout for users
+> ahead of UTC (Australia etc.) at submit time. Fixed in repo (commit aligns the gate to UTC+1).
+> **Deploy from the iMac:** `npx supabase login` → `npx supabase link --project-ref fklltgfczcxegijwdeax`
+> → `npx supabase functions deploy submit-attempt`. Server-only — no app rebuild needed. (The app
+> error-message improvement rides along in the next build.)
+
 Key IDs (for reference):
 - Bundle / package: `com.bout.app`
 - Apple App Store Connect App ID (ascAppId): `6784204484` · Apple team: `DNS7GY854U` ("Matthew Groves", NOT the Individual/Ryderwear team `ULZZSDF2JC`)
