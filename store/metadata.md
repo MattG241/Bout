@@ -54,5 +54,4 @@ Primary: Games / Word. Secondary: Games / Trivia.
   `/docs`. Confirm the exact base URL there; update these if it differs.)
 
 ## Support
-https://mattg241.github.io/Bout/
-(Note: Google Play's listing requires a real contact *email* in the console — set one there. Apple accepts a support URL, which this satisfies.)
+mgroves5022@outlook.com

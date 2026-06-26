@@ -43,4 +43,4 @@ liable for indirect or incidental damages arising from your use of the app.
 We may update these terms; continued use after an update means you accept it.
 
 ## Contact
-Reach us via https://mattg241.github.io/Bout/
+mgroves5022@outlook.com
