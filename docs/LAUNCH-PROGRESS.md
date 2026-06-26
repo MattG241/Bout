@@ -43,10 +43,15 @@ Key IDs (for reference):
 - ✅ `goog_…` key wired into `app.json`
 - ✅ Rebuilt with the key + timezone fix, uploaded to Internal testing, installed on device
 - ✅ **Sandbox purchase VERIFIED on device** — Season Pass buy → premium unlocked 🎉
-- 👉 **Step 8 — Android push (FCM)** *(only remaining Android tech step)*: create a Firebase project,
-      add Android app `com.bout.app`, download `google-services.json`, wire `android.googleServicesFile`
-      + the FCM V1 service-account key in EAS *(Claude wires config; you provide the Firebase files)*, rebuild.
-- ⬜ Complete Play store listing (graphics, data safety, content rating) + submit for review.
+- ✅ Android push (FCM): Firebase project `bout-5bab5`, `google-services.json` committed, FCM V1 key in EAS
+- 👉 **Rebuild Android** (now includes google-services.json) → upload to Internal testing → update on phone → **send a test push** to verify a notification lands
+- ⬜ Complete Play store listing (graphics, data safety, content rating, target audience) + submit for review
+
+## Path to launch (both platforms, after the above)
+- ⬜ iOS: install latest TestFlight build → sandbox purchase test → (optional) fresh build to match latest client code
+- ⬜ Store listings: screenshots (have generators in `scripts/`), descriptions (`store/metadata.md`), privacy URL (live), age/content rating, data safety
+- ⬜ Submit both apps for review → once approved, release to production
+- ⚠️ Android only: complete **Android developer verification** before public production (does not block testing)
 
 ---
 
