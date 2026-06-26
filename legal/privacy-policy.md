@@ -46,4 +46,4 @@ collect data from children under 13.
 We keep your data while your account is active. Deleting your account removes it promptly.
 
 ## Contact
-privacy@bout.app
+Reach us via https://mattg241.github.io/Bout/

@@ -18,9 +18,9 @@ const PRIVACY: Section[] = [
   { h: 'What we do NOT collect', b: 'No location, contacts, or photos. No third-party advertising or cross-app tracking. We never receive your payment card details — Apple and Google handle payments.' },
   { h: 'How we use it', b: 'To run the daily game and your crew league: deliver puzzles, score attempts server-side, maintain streaks and standings, send the daily nudge, and provide premium features to subscribers.' },
   { h: 'Sharing', b: 'Your handle, scores, and standings are visible to members of leagues you belong to. We do not sell your data. Processors: Supabase (backend), Expo (push), RevenueCat (subscriptions).' },
-  { h: 'Your choices', b: 'Delete your account anytime in Settings — it permanently erases your data. Turn notifications on/off in Settings or your OS. Depending on your region you may have rights to access or export your data — contact privacy@bout.app.' },
+  { h: 'Your choices', b: 'Delete your account anytime in Settings — it permanently erases your data. Turn notifications on/off in Settings or your OS. Depending on your region you may have rights to access or export your data — reach us via https://mattg241.github.io/Bout/.' },
   { h: 'Children', b: 'Bout is for general audiences and not directed at children under 13.' },
-  { h: 'Contact', b: 'privacy@bout.app' },
+  { h: 'Contact', b: 'Reach us via https://mattg241.github.io/Bout/' },
 ];
 
 const TERMS: Section[] = [
@@ -30,7 +30,7 @@ const TERMS: Section[] = [
   { h: 'Accounts & conduct', b: "You're responsible for activity under your account and for choosing an appropriate handle. We may remove abusive, infringing, or unlawful handles or content. There is no public feed — visibility is limited to your leagues." },
   { h: 'Subscriptions', b: 'The daily bout and the ladder are free. The optional Season Pass and cosmetics are sold via the app stores and managed by RevenueCat; subscriptions auto-renew until cancelled in your store account. Premium never confers a competitive scoring advantage.' },
   { h: 'Disclaimer', b: 'The service is provided "as is" without warranties. To the extent permitted by law, we are not liable for indirect or incidental damages arising from your use of the app.' },
-  { h: 'Contact', b: 'support@bout.app' },
+  { h: 'Contact', b: 'Reach us via https://mattg241.github.io/Bout/' },
 ];
 
 export default function Legal() {
