@@ -47,3 +47,7 @@ coverage/
 # App Store Connect API keys (never commit)
 AuthKey_*.p8
 *.p8
+
+# Firebase / FCM admin private keys (secret — upload to EAS, never commit)
+*firebase-adminsdk*.json
+*-service-account*.json
