@@ -2,11 +2,8 @@
 
 Last updated: 2026-06-25. Legend: ✅ done · 👉 **you are here** · ⬜ to do.
 
-> ⚠️ **Pending deploy — timezone submit fix.** `submit-attempt` rejected the daily bout for users
-> ahead of UTC (Australia etc.) at submit time. Fixed in repo (commit aligns the gate to UTC+1).
-> **Deploy from the iMac:** `npx supabase login` → `npx supabase link --project-ref fklltgfczcxegijwdeax`
-> → `npx supabase functions deploy submit-attempt`. Server-only — no app rebuild needed. (The app
-> error-message improvement rides along in the next build.)
+> ✅ **Timezone submit fix — DEPLOYED & verified.** `submit-attempt` now allows play_date <= UTC+1,
+> so users ahead of UTC (Australia etc.) can submit their local-today bout. Confirmed working on device.
 
 Key IDs (for reference):
 - Bundle / package: `com.bout.app`
@@ -40,20 +37,15 @@ Key IDs (for reference):
 
 ## Android
 - ✅ Play Console app created (`com.bout.app`)
-- ✅ EAS production build (`.aab`)
-- ✅ Uploaded to **Internal testing** (live to internal testers)
 - ✅ Subscription `season_pass`: `monthly` ($4.99) + `annual` ($29.99) base plans + `free-trial-7d` offer
-- 👉 **Step 5 — Google Play service account** (so RevenueCat can verify Android purchases):
-      Play Console → Setup → API access → create service account in Google Cloud → download JSON →
-      grant it "View app info", "View financial data", "Manage orders & subscriptions".
-- ⬜ Step 6 — RevenueCat: add **Google Play** app (`com.bout.app`), upload the service-account JSON,
-      import products `season_pass:monthly` + `season_pass:annual`, attach both to the `season_pass`
-      entitlement, add Monthly + Annual packages to the `default` offering, copy the **`goog_…`** key.
-- ⬜ Step 7 — Wire the `goog_…` key into `app.json` *(Claude does this)*.
-- ⬜ Step 8 — Android push: add Firebase `google-services.json` + wire `android.googleServicesFile`
-      and the FCM credential in EAS *(Claude wires the config; you provide the Firebase file)*.
-- ⬜ Step 9 — Rebuild Android (`eas build -p android`) with the key + push, re-upload to internal testing.
-- ⬜ Step 10 — Install on an Android phone (Testers opt-in link) + **sandbox purchase test**.
+- ✅ Google Play service account (`bout-642@…`) created + permissions granted + uploaded to RevenueCat
+- ✅ RevenueCat Google Play app, products (`season_pass:monthly`/`:annual`), entitlement + offering
+- ✅ `goog_…` key wired into `app.json`
+- ✅ Rebuilt with the key + timezone fix, uploaded to Internal testing, installed on device
+- ✅ **Sandbox purchase VERIFIED on device** — Season Pass buy → premium unlocked 🎉
+- 👉 **Step 8 — Android push (FCM)** *(only remaining Android tech step)*: create a Firebase project,
+      add Android app `com.bout.app`, download `google-services.json`, wire `android.googleServicesFile`
+      + the FCM V1 service-account key in EAS *(Claude wires config; you provide the Firebase files)*, rebuild.
 - ⬜ Complete Play store listing (graphics, data safety, content rating) + submit for review.
 
 ---
