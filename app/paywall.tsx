@@ -152,15 +152,37 @@ export default function Paywall() {
       <Button label="Restore purchases" variant="ghost" onPress={restore} />
       <Spacer size={spacing.sm} />
       <Text variant="caption" color={colors.textTertiary} center>
-        Subscriptions renew until cancelled in your App Store / Play account. Manage or cancel
-        anytime in Settings.
+        Payment is charged to your store account at confirmation of purchase. Subscriptions renew
+        automatically unless cancelled at least 24 hours before the end of the current period, and
+        your account is charged for renewal within 24 hours of that point. Manage or cancel anytime
+        in your App Store / Play account settings.
       </Text>
+
+      {/* App Store Guideline 3.1.2 requires functional Terms and Privacy links on the
+          purchase screen itself, not only in Settings. */}
+      <Spacer size={spacing.md} />
+      <View style={styles.legal}>
+        <Pressable onPress={() => router.push('/legal/terms')} hitSlop={8}>
+          <Text variant="caption" color={colors.textSecondary}>
+            Terms of Use
+          </Text>
+        </Pressable>
+        <Text variant="caption" color={colors.textTertiary}>
+          ·
+        </Text>
+        <Pressable onPress={() => router.push('/legal/privacy')} hitSlop={8}>
+          <Text variant="caption" color={colors.textSecondary}>
+            Privacy Policy
+          </Text>
+        </Pressable>
+      </View>
     </Screen>
   );
 }
 
 const styles = StyleSheet.create({
   head: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  legal: { flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: spacing.sm },
   perk: { flexDirection: 'row', gap: spacing.md, alignItems: 'flex-start', paddingVertical: 6 },
   note: { padding: spacing.lg, borderRadius: radius.md, borderWidth: 1, borderColor: colors.border, backgroundColor: colors.surface },
   plan: {
