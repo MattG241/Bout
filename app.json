@@ -1,0 +1,95 @@
+{
+  "expo": {
+    "name": "Bout",
+    "slug": "bout",
+    "owner": "ryderwear",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "scheme": "bout",
+    "userInterfaceStyle": "dark",
+    "newArchEnabled": true,
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/98565089-854e-444a-9088-69d8373ef221"
+    },
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#000000"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.bout.app",
+      "associatedDomains": [
+        "applinks:bout.app"
+      ],
+      "infoPlist": {
+        "UIBackgroundModes": [
+          "remote-notification"
+        ],
+        "ITSAppUsesNonExemptEncryption": false
+      }
+    },
+    "android": {
+      "package": "com.bout.app",
+      "googleServicesFile": "./google-services.json",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#000000"
+      },
+      "permissions": [
+        "POST_NOTIFICATIONS"
+      ],
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "autoVerify": true,
+          "data": [
+            {
+              "scheme": "https",
+              "host": "bout.app",
+              "pathPrefix": "/join"
+            }
+          ],
+          "category": [
+            "BROWSABLE",
+            "DEFAULT"
+          ]
+        }
+      ]
+    },
+    "plugins": [
+      "expo-router",
+      "expo-notifications",
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#000000",
+          "image": "./assets/splash.png",
+          "imageWidth": 200
+        }
+      ],
+      "expo-asset",
+      "expo-font",
+      "expo-audio"
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "extra": {
+      "supabaseUrl": "https://fklltgfczcxegijwdeax.supabase.co",
+      "supabaseAnonKey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZrbGx0Z2ZjemN4ZWdpandkZWF4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE2ODk1NDksImV4cCI6MjA5NzI2NTU0OX0.Babc6uPjNTv6QZgu9_UWSEKvkGaEaxYp0E-9DmCZ0xA",
+      "revenueCatApiKeyIos": "appl_PvgtaPBrUqJalIRnumseKFwAmzD",
+      "revenueCatApiKeyAndroid": "goog_RRXiIboyiPlCFmrxYAIWneUJEEu",
+      "eas": {
+        "projectId": "98565089-854e-444a-9088-69d8373ef221"
+      }
+    }
+  }
+}

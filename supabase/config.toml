@@ -1,0 +1,51 @@
+# Supabase project configuration for Bout.
+project_id = "bout"
+
+[api]
+enabled = true
+port = 54321
+schemas = ["public", "graphql_public"]
+extra_search_path = ["public", "extensions"]
+max_rows = 1000
+
+[db]
+port = 54322
+major_version = 15
+
+[realtime]
+enabled = true
+
+[auth]
+enabled = true
+site_url = "bout://"
+additional_redirect_urls = ["bout://", "https://bout.app"]
+jwt_expiry = 3600
+enable_signup = true
+
+[auth.email]
+enable_signup = true
+enable_confirmations = false
+
+# Edge Functions. The competitive ones run with verify_jwt; scheduled ones are invoked by
+# the cron/service role.
+[functions.submit-attempt]
+verify_jwt = true
+[functions.match-house-league]
+verify_jwt = true
+[functions.finalize-race]
+verify_jwt = true
+[functions.score-race]
+verify_jwt = true
+[functions.delete-account]
+verify_jwt = true
+# RevenueCat posts server-to-server with its own shared-secret Authorization header.
+[functions.revenuecat-webhook]
+verify_jwt = false
+[functions.publish-daily-puzzle]
+verify_jwt = false
+[functions.resolve-pickem]
+verify_jwt = false
+[functions.season-rollover]
+verify_jwt = false
+[functions.send-daily-push]
+verify_jwt = false
