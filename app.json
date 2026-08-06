@@ -2,6 +2,7 @@
   "expo": {
     "name": "Bout",
     "slug": "bout",
+    "owner": "ryderwear",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
