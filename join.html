@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Join a gym on Bout</title>
+<meta name="description" content="You've been invited to a gym on Bout. One puzzle a day, same ladder.">
+<meta name="theme-color" content="#000000">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%23000'/><rect x='10' y='10' width='12' height='12' rx='3' fill='%2300E676'/></svg>">
+
+<meta property="og:title" content="Join my gym on Bout">
+<meta property="og:description" content="One puzzle a day. Same ladder. Tap to join.">
+<meta property="og:type" content="website">
+
+<style>
+:root{
+  --bg:#000000;
+  --surface:#0A0A0A;
+  --surface-raised:#141414;
+  --border:#1F1F1F;
+  --border-strong:#2A2A2A;
+  --text:#FFFFFF;
+  --text-2:#A1A1A1;
+  --text-3:#6B6B6B;
+  --accent:#00E676;
+  --max:660px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{
+  background:var(--bg); color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  font-weight:500; line-height:1.45;
+  padding:0 24px calc(64px + env(safe-area-inset-bottom));
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:var(--max);margin:0 auto}
+.label{font-size:12px;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;color:var(--text-3)}
+.label.accent{color:var(--accent)}
+
+header{padding:72px 0 8px}
+.mark{display:flex;align-items:center;gap:12px}
+.mark .dot{width:12px;height:12px;border-radius:3px;background:var(--accent)}
+.mark span{font-size:13px;font-weight:800;letter-spacing:3px;text-transform:uppercase}
+
+h1{font-size:clamp(34px,8vw,52px);line-height:1.03;font-weight:800;letter-spacing:-1.4px;margin:28px 0 0}
+h1 em{font-style:normal;color:var(--accent)}
+.sub{font-size:17px;color:var(--text-2);margin-top:16px;max-width:46ch}
+
+/* The code is the payload — it must survive a stripped link, a screenshot, or a retype. */
+.code{
+  margin-top:32px;background:var(--surface);border:1px solid var(--border-strong);
+  border-radius:16px;padding:24px;text-align:center;
+}
+.code .val{
+  font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+  font-size:clamp(34px,11vw,48px);font-weight:700;letter-spacing:6px;
+  color:var(--accent);word-break:break-all;
+}
+.code .hint{font-size:13px;color:var(--text-3);margin-top:10px}
+.code button{
+  margin-top:16px;background:var(--surface-raised);color:var(--text);
+  border:1px solid var(--border-strong);border-radius:10px;
+  padding:10px 18px;font:inherit;font-size:14px;font-weight:700;cursor:pointer;
+}
+.code button:active{transform:scale(.985)}
+
+.cta{margin:30px 0 0;display:flex;flex-wrap:wrap;gap:12px}
+.btn{
+  display:inline-flex;align-items:center;gap:10px;
+  padding:16px 24px;border-radius:14px;text-decoration:none;
+  font-size:16px;font-weight:700;letter-spacing:-.2px;
+  background:var(--accent);color:#000;border:1px solid var(--accent);
+  transition:transform .12s ease;
+}
+.btn:active{transform:scale(.985)}
+.btn.secondary{background:var(--surface-raised);color:var(--text);border-color:var(--border-strong)}
+.btn svg{width:20px;height:20px;fill:currentColor;flex:none}
+.note{margin-top:14px;font-size:13px;color:var(--text-3)}
+
+section{margin-top:64px}
+h2{font-size:22px;font-weight:800;letter-spacing:-.4px}
+.rows{margin-top:20px;border-top:1px solid var(--border)}
+.row{display:flex;gap:18px;padding:18px 0;border-bottom:1px solid var(--border)}
+.row .n{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;color:var(--accent);padding-top:3px;flex:none;width:26px}
+.row h3{font-size:16px;font-weight:700;letter-spacing:-.2px}
+.row p{font-size:15px;color:var(--text-2);margin-top:4px}
+
+footer{margin-top:72px;padding-top:26px;border-top:1px solid var(--border);font-size:14px;color:var(--text-3)}
+footer a{color:var(--text-2);text-decoration:none;border-bottom:1px solid var(--border-strong)}
+footer a:hover{color:var(--accent);border-color:var(--accent)}
+footer .links{display:flex;flex-wrap:wrap;gap:20px}
+footer .fine{margin-top:18px}
+@media (prefers-reduced-motion:reduce){.btn,.code button{transition:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="mark"><div class="dot"></div><span>Bout</span></div>
+    <p class="label accent" style="margin-top:30px">You've been invited</p>
+    <h1>Join the <em>gym</em>.</h1>
+    <p class="sub" id="sub">Someone wants you on their ladder. One puzzle a day, everyone gets the same one, and the scores sit side by side.</p>
+  </header>
+
+  <div class="code" id="codeBox" hidden>
+    <p class="label">Invite code</p>
+    <div class="val" id="codeVal">------</div>
+    <p class="hint" id="codeHint">Enter this in the app under Crew → Join a gym.</p>
+    <button type="button" id="copyBtn">Copy code</button>
+  </div>
+
+  <div class="cta" id="cta"></div>
+  <p class="note" id="note"></p>
+
+  <section>
+    <h2>How it works</h2>
+    <div class="rows">
+      <div class="row">
+        <div class="n">01</div>
+        <div><h3>Install Bout</h3><p>Free, and the daily puzzle is free forever.</p></div>
+      </div>
+      <div class="row">
+        <div class="n">02</div>
+        <div><h3>Open this link again, or type the code</h3><p>Crew tab → Join a gym → enter the six characters above.</p></div>
+      </div>
+      <div class="row">
+        <div class="n">03</div>
+        <div><h3>Play today's puzzle</h3><p>Speed and accuracy both count. Your score lands on the shared ladder straight away.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="links">
+      <a href="./">Bout</a>
+      <a href="./support.html">Support</a>
+      <a href="./privacy.html">Privacy</a>
+    </div>
+    <p class="fine">One puzzle a day. Same puzzle for everyone.</p>
+  </footer>
+
+</div>
+
+<script>
+/*
+ * The invite link previously pointed at a domain that did not exist, so every invite anyone
+ * sent was dead. This page is the other half of the fix.
+ *
+ * It does NOT attempt a silent auto-redirect into the app. A bare `location = 'bout://...'`
+ * on a device without the app shows a browser error dialog, and Safari blocks it outright
+ * unless it follows a real tap. A visible button is both more reliable and more honest —
+ * and the code is on screen regardless, which is the part that always works.
+ */
+var APP_STORE  = 'https://apps.apple.com/app/id6784204484';
+var PLAY_STORE = 'https://play.google.com/store/apps/details?id=com.bout.app';
+var PLAY_LIVE  = false;   /* flip when Android reaches production */
+
+/* Accept ?c=CODE, ?code=CODE, or a trailing #CODE. Invites get retyped and mangled. */
+function readCode() {
+  var q = new URLSearchParams(location.search);
+  var raw = q.get('c') || q.get('code') || location.hash.replace('#', '') || '';
+  return raw.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 12);
+}
+
+var code = readCode();
+var isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+            (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+var isAndroid = /Android/.test(navigator.userAgent);
+
+var APPLE_SVG = '<svg viewBox="0 0 24 24"><path d="M17.05 12.53c-.02-2.2 1.8-3.26 1.88-3.31-1.02-1.5-2.62-1.7-3.18-1.72-1.35-.14-2.64.79-3.33.79-.69 0-1.75-.78-2.87-.75-1.48.02-2.84.86-3.6 2.18-1.54 2.67-.39 6.62 1.1 8.79.73 1.06 1.6 2.25 2.74 2.21 1.1-.05 1.52-.71 2.85-.71 1.33 0 1.71.71 2.87.69 1.19-.02 1.94-1.08 2.66-2.15.84-1.23 1.19-2.42 1.21-2.48-.03-.01-2.32-.89-2.34-3.54zM14.9 5.6c.61-.74 1.02-1.77.91-2.8-.88.04-1.94.59-2.57 1.32-.56.65-1.05 1.7-.92 2.7.98.08 1.98-.5 2.58-1.22z"/></svg>';
+var PLAY_SVG  = '<svg viewBox="0 0 24 24"><path d="M3.6 2.3c-.3.3-.5.8-.5 1.4v16.6c0 .6.2 1.1.5 1.4l.1.1 9.3-9.3v-.2L3.6 2.3zM16.4 15.7l-3.1-3.1v-.2l3.1-3.1.1.1 3.7 2.1c1.1.6 1.1 1.6 0 2.2l-3.8 2zM15.9 16.2L12.7 13l-9.1 9.1c.4.4 1 .4 1.7.1l10.6-6zM15.9 7.8L5.3 1.8c-.7-.4-1.3-.3-1.7.1L12.7 11l3.2-3.2z"/></svg>';
+
+var cta  = document.getElementById('cta');
+var note = document.getElementById('note');
+
+function storeButton(secondary) {
+  var cls = 'btn' + (secondary ? ' secondary' : '');
+  if (isAndroid) {
+    return PLAY_LIVE
+      ? '<a class="' + cls + '" href="' + PLAY_STORE + '">' + PLAY_SVG + 'Get it on Google Play</a>'
+      : '';
+  }
+  return '<a class="' + cls + '" href="' + APP_STORE + '">' + APPLE_SVG + 'Download on the App Store</a>';
+}
+
+if (code) {
+  document.getElementById('codeVal').textContent = code;
+  document.getElementById('codeBox').hidden = false;
+
+  /* The app's own route. expo.scheme is "bout", and app/join/[code].tsx handles it. */
+  var deep = 'bout://join/' + encodeURIComponent(code);
+  cta.innerHTML = '<a class="btn" href="' + deep + '">Open in Bout</a>' + storeButton(true);
+  note.textContent = 'Already have Bout? "Open in Bout" joins you straight away. Otherwise install it first, then come back to this link.';
+} else {
+  /* No code — someone landed here bare. Say so plainly instead of showing a broken join. */
+  document.getElementById('sub').textContent =
+    'This invite link is missing its code. Ask whoever sent it to share it again from the Crew tab — or install Bout and enter the code by hand.';
+  cta.innerHTML = storeButton(false) + '<a class="btn secondary" href="./">About Bout</a>';
+  if (isAndroid && !PLAY_LIVE) note.textContent = 'Android is in closed testing right now.';
+}
+
+document.getElementById('copyBtn').addEventListener('click', function () {
+  var btn = this;
+  var done = function () {
+    btn.textContent = 'Copied';
+    setTimeout(function () { btn.textContent = 'Copy code'; }, 1600);
+  };
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(code).then(done, function () { btn.textContent = 'Copy failed'; });
+  } else {
+    /* Older mobile Safari has no async clipboard — select the text so a long-press works. */
+    var r = document.createRange();
+    r.selectNodeContents(document.getElementById('codeVal'));
+    var sel = window.getSelection();
+    sel.removeAllRanges(); sel.addRange(r);
+    try { document.execCommand('copy'); done(); } catch (e) { btn.textContent = 'Press and hold to copy'; }
+  }
+});
+</script>
+</body>
+</html>
